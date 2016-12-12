@@ -25,16 +25,33 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ZebraTrack
+using MHApi.GUI;
+using ZebraTrack.ViewModels;
+
+namespace ZebraTrack.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainView : WindowAwareView
     {
-        public MainWindow()
+        MainViewModel _viewModel;
+
+        public MainView()
         {
             InitializeComponent();
+            _viewModel = ViewModel.Source as MainViewModel;
         }
+
+        #region Cleanup
+
+        protected override void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_viewModel != null)
+                _viewModel.Dispose();
+            base.WindowClosing(sender, e);
+        }
+
+        #endregion
     }
 }
