@@ -135,6 +135,7 @@ namespace ZebraTrack.ViewModels
                 return;
             _mainImage = new EZImageSource();
             _fishImage = new EZImageSource();
+            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, null, true, 3000);
         }
 
         #region Methods
