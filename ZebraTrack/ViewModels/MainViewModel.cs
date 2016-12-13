@@ -245,7 +245,7 @@ namespace ZebraTrack.ViewModels
                                 CopyRegionImage(fish.Centroid, fishImage, image);
 
                             if (experiment != null)
-                                experiment.ProcessNext(FrameIndex, fish.Centroid, fish.Angle, fishImage);
+                                experiment.ProcessNext((int)FrameIndex, fish.Centroid, fish.Angle, fishImage);
 
                             //at 10Hz display camera and fish image
                             if(FrameIndex % (FrameRate / 10) == 0)

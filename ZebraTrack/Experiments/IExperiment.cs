@@ -22,12 +22,12 @@ namespace ZebraTrack.Experiments
         /// <param name="heading">The heading angle of the fish</param>
         /// <param name="fishImage">Small ROI image of the fish for further processing</param>
         /// <returns>True if the experiment should continue</returns>
-        bool ProcessNext(uint frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage);
+        bool ProcessNext(int frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage);
 
         /// <summary>
-        /// The time remaining in the experiment
+        /// The number of seconds remaining in the experiment
         /// </summary>
-        TimeSpan TimeRemaining { get; }
+        int SecondsRemaining { get; }
 
         /// <summary>
         /// A status message about the experiment that can be displayed

@@ -19,6 +19,16 @@ namespace ZebraTrack.Experiments
         protected Saver FileSaver { get; private set; }
 
         /// <summary>
+        /// The acquisition framerate
+        /// </summary>
+        protected int FrameRate { get; private set; }
+
+        /// <summary>
+        /// The intended length of the experiment in seconds
+        /// </summary>
+        protected int ExperimentLength { get; private set; }
+
+        /// <summary>
         /// The name of the experiment
         /// </summary>
         public string Name { get; private set; }
@@ -31,7 +41,7 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// A comment string associated with the experiment
         /// </summary>
-        public string Comment { get; private set; }
+        public string Comment { get; set; }
 
         /// <summary>
         /// The time the experiment object was constructed
@@ -44,14 +54,17 @@ namespace ZebraTrack.Experiments
         /// <param name="folder">The folder in which to save files</param>
         /// <param name="name">The name of the experiment</param>
         /// <param name="fishID">The fish used for the experiment</param>
-        /// <param name="comment">A comment associated with the experiment</param>
-        public ExperimentBase(string folder, string name, string fishID, string comment)
+        /// <param name="experimentLength">The length of the experiment in seconds</param>
+        /// <param name="frameRate">The acquisition framerate</param>
+        public ExperimentBase(string folder, string name, string fishID, int experimentLength, int frameRate)
         {
             FileSaver = new Saver(folder, name + '_' + fishID, true);
             Name = name;
             FishID = fishID;
             _infoWriter = FileSaver.GetStreamWriter(".info");
             StartTime = DateTime.Now;
+            ExperimentLength = experimentLength;
+            FrameRate = frameRate;
         }
 
         /// <summary>
@@ -82,10 +95,10 @@ namespace ZebraTrack.Experiments
 
 
         #region IExperiment
-        public abstract TimeSpan TimeRemaining { get; }
+        public abstract int SecondsRemaining { get; }
         public abstract string StatusMessage { get; }
 
-        public abstract bool ProcessNext(uint frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage);
+        public abstract bool ProcessNext(int frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage);
         #endregion
 
         #region IDisposable Support
