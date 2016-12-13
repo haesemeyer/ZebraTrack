@@ -65,7 +65,11 @@ namespace ZebraTrack.Experiments
             _lastFrame = frameNumber;
             if (frameNumber >= _totalFrames)
                 return false;
-            throw new NotImplementedException();
+            if (fish != null)
+                _trackWriter.WriteLine("{0}\t{0}\t{0}\t{0}", frameNumber, fish.Centroid.x, fish.Centroid.y, fish.Angle);
+            else
+                _trackWriter.WriteLine("NaN\tNaN\tNaN\tNaN");
+            return true;
         }
 
         protected override void Dispose(bool disposing)
