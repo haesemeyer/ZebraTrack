@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using ipp;
 using MHApi.DrewsClasses;
+using MHApi.Imaging;
 
 namespace ZebraTrack.Experiments
 {
@@ -24,6 +22,11 @@ namespace ZebraTrack.Experiments
         /// The total number of frames in the experiment
         /// </summary>
         int _totalFrames;
+
+        /// <summary>
+        /// The file writer to save experiment information
+        /// </summary>
+        StreamWriter _trackWriter;
         
         public TrackAndWrite(int expSeconds, int frameRate, string folder, string name, string fishID) : base(folder, name, fishID, expSeconds, frameRate)
         {
@@ -49,13 +52,34 @@ namespace ZebraTrack.Experiments
             }
         }
         
-
-        public override bool ProcessNext(int frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage)
+        /// <summary>
+        /// Process the next frame
+        /// </summary>
+        /// <param name="frameNumber">The frame index</param>
+        /// <param name="fishCentroid">The tracked fishes centroid position</param>
+        /// <param name="heading">The heading of the fish</param>
+        /// <param name="fishImage">Subregion image of the fish</param>
+        /// <returns></returns>
+        public override bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage)
         {
             _lastFrame = frameNumber;
             if (frameNumber >= _totalFrames)
                 return false;
             throw new NotImplementedException();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                if (_trackWriter != null)
+                {
+                    _trackWriter.Dispose();
+                    _trackWriter = null;
+
+                }
+            }
         }
     }
 }

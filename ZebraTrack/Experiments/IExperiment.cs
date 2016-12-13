@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using ipp;
 using MHApi.DrewsClasses;
+using MHApi.Imaging;
 
 namespace ZebraTrack.Experiments
 {
@@ -18,11 +19,10 @@ namespace ZebraTrack.Experiments
         /// Processes the next frame
         /// </summary>
         /// <param name="frameNumber">The index of the current frame</param>
-        /// <param name="fishCentroid">The centroid of the fish</param>
-        /// <param name="heading">The heading angle of the fish</param>
+        /// <param name="fish">The tracked fish object</param>
         /// <param name="fishImage">Small ROI image of the fish for further processing</param>
         /// <returns>True if the experiment should continue</returns>
-        bool ProcessNext(int frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage);
+        bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage);
 
         /// <summary>
         /// The number of seconds remaining in the experiment

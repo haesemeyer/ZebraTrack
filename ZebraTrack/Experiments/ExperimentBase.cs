@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using ipp;
+using MHApi.Imaging;
 using MHApi.DrewsClasses;
 
 namespace ZebraTrack.Experiments
@@ -98,7 +98,7 @@ namespace ZebraTrack.Experiments
         public abstract int SecondsRemaining { get; }
         public abstract string StatusMessage { get; }
 
-        public abstract bool ProcessNext(int frameNumber, IppiPoint fishCentroid, double heading, Image8 fishImage);
+        public abstract bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage);
         #endregion
 
         #region IDisposable Support
