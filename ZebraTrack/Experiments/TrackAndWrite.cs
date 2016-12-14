@@ -79,7 +79,7 @@ namespace ZebraTrack.Experiments
             if (frameNumber >= _totalFrames)
                 return false;
             if (fish != null)
-                _trackWriter.WriteLine("{0}\t{0}\t{0}\t{0}", frameNumber, fish.Centroid.x, fish.Centroid.y, fish.Angle);
+                _trackWriter.WriteLine("{0}\t{1}\t{2}\t{3}", frameNumber, fish.Centroid.x, fish.Centroid.y, fish.Angle);
             else
                 _trackWriter.WriteLine("NaN\tNaN\tNaN\tNaN");
             return true;
