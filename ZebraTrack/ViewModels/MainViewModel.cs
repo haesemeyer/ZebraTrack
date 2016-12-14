@@ -24,6 +24,7 @@ using MHApi.Imaging;
 using ipp;
 
 using ZebraTrack.Experiments;
+using System.Windows.Input;
 
 namespace ZebraTrack.ViewModels
 {
@@ -383,7 +384,22 @@ namespace ZebraTrack.ViewModels
         }
 
         #endregion
-        
+
+        RelayCommand _startStopClick;
+
+        /// <summary>
+        /// The command that handles starting/stopping of an experiment
+        /// </summary>
+        public ICommand StartStopClick
+        {
+            get
+            {
+                if (_startStopClick == null)
+                    _startStopClick = new RelayCommand(param => { if (!IsRunning) Start(); else Stop(); });
+                return _startStopClick;
+            }
+        }
+
 
         #region Cleanup
 

@@ -45,7 +45,7 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-            <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="84,12,85.694,12.04" Grid.Row="2" d:LayoutOverrides="Height"/>
+            <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="84,12,85.694,12.04" Grid.Row="2" d:LayoutOverrides="Height" Command="{Binding StartStopClick, Mode=OneWay}"/>
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
