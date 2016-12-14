@@ -44,6 +44,11 @@ namespace ZebraTrack.Experiments
         public string Comment { get; set; }
 
         /// <summary>
+        /// The Date of birth of the fish
+        /// </summary>
+        public DateTime DOB { get; set; }
+
+        /// <summary>
         /// The time the experiment object was constructed
         /// </summary>
         protected DateTime StartTime { get; set; }
@@ -58,6 +63,8 @@ namespace ZebraTrack.Experiments
         /// <param name="frameRate">The acquisition framerate</param>
         public ExperimentBase(string folder, string name, string fishID, int experimentLength, int frameRate)
         {
+            if (!Path.IsPathRooted(folder))
+                throw new ArgumentException("folder needs to be a rooted path", nameof(folder));
             FileSaver = new Saver(folder, name + '_' + fishID, true);
             Name = name;
             FishID = fishID;
