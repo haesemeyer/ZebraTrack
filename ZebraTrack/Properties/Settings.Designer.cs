@@ -40,5 +40,14 @@ namespace ZebraTrack.Properties {
                 return ((int)(this["FrameRate"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\\\Behavior\\\\")]
+        public string SavePath {
+            get {
+                return ((string)(this["SavePath"]));
+            }
+        }
     }
 }

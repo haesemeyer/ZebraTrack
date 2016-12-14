@@ -8,5 +8,8 @@
     <Setting Name="FrameRate" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">700</Value>
     </Setting>
+    <Setting Name="SavePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">E:\\Behavior\\</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
