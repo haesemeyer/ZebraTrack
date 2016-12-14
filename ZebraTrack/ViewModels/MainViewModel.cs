@@ -211,7 +211,7 @@ namespace ZebraTrack.ViewModels
             }
         }
 
-        public IExperimentVM ExperimentViewModel { get; set; }
+        public static IExperimentVM ExperimentViewModel { get; set; }
 
         #endregion
 
@@ -226,7 +226,6 @@ namespace ZebraTrack.ViewModels
             _mainImage = new EZImageSource();
             _fishImage = new EZImageSource();
             _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, null, true, 3000);
-            Current = this;
         }
 
         #region Methods
@@ -384,24 +383,7 @@ namespace ZebraTrack.ViewModels
         }
 
         #endregion
-        private static MainViewModel _current = null;
-
-        /// <summary>
-        /// Handle to the applications main view model
-        /// </summary>
-        public static MainViewModel Current
-        {
-            get
-            {
-                return _current;
-            }
-            private set
-            {
-                if (_current != null && value != null)
-                    throw new ApplicationException("MainViewModel was created a second time");
-                _current = value;
-            }
-        }
+        
 
         #region Cleanup
 
@@ -413,7 +395,6 @@ namespace ZebraTrack.ViewModels
                 _acquisitionThread.Dispose();
                 _acquisitionThread = null;
             }
-            Current = null;
             base.Dispose(disposing);
         }
 
