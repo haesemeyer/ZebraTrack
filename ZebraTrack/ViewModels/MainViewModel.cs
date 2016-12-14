@@ -256,7 +256,7 @@ namespace ZebraTrack.ViewModels
             if (IsRunning)
                 return;
             //create experimental class
-            IExperiment exp = null;
+            ExperimentBase exp = null;
             if (ExperimentViewModel != null)
                 exp = ExperimentViewModel.CreateExperiment(ExperimentName, FishName);
             else
@@ -264,6 +264,7 @@ namespace ZebraTrack.ViewModels
                 System.Diagnostics.Debug.WriteLine("No experiment view model was active. Exiting.");
                 return;
             }
+            exp.WriteExperimentInformation();
             //dispose previewthread
             if (_acquisitionThread != null)
                 _acquisitionThread.Dispose();
