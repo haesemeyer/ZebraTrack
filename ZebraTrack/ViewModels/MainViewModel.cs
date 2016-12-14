@@ -20,6 +20,7 @@ using MHApi.Threading;
 using MHApi.DrewsClasses;
 using MHApi.Tracking;
 using MHApi.Imaging;
+using MHApi.Utilities;
 
 using ipp;
 
@@ -381,6 +382,7 @@ namespace ZebraTrack.ViewModels
                     tracker.Dispose();
                 if (fishImage != null)
                     fishImage.Dispose();
+                DispatcherHelper.CheckBeginInvokeOnUI(() => { Stop(); });
             }
         }
 
