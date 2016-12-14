@@ -75,6 +75,7 @@
     <Compile Include="Experiments\ExperimentBase.cs" />
     <Compile Include="Experiments\IExperiment.cs" />
     <Compile Include="Experiments\TrackAndWrite.cs" />
+    <Compile Include="ViewModels\IExperimentVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>

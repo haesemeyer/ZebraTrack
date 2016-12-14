@@ -211,6 +211,8 @@ namespace ZebraTrack.ViewModels
             }
         }
 
+        public IExperimentVM ExperimentViewModel { get; set; }
+
         #endregion
 
         public MainViewModel()
@@ -224,10 +226,14 @@ namespace ZebraTrack.ViewModels
             _mainImage = new EZImageSource();
             _fishImage = new EZImageSource();
             _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, null, true, 3000);
+            Current = this;
         }
 
         #region Methods
 
+        /// <summary>
+        /// Stop running experiment and switch back to preview
+        /// </summary>
         void Stop()
         {
             if (!IsRunning)
@@ -242,15 +248,25 @@ namespace ZebraTrack.ViewModels
             IsRunning = false;
         }
 
+        /// <summary>
+        /// Start a new experiment
+        /// </summary>
         void Start()
         {
             if (IsRunning)
                 return;
+            //create experimental class
+            IExperiment exp = null;
+            if (ExperimentViewModel != null)
+                exp = ExperimentViewModel.CreateExperiment(ExperimentName, FishName);
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("No experiment view model was active. Exiting.");
+                return;
+            }
             //dispose previewthread
             if (_acquisitionThread != null)
                 _acquisitionThread.Dispose();
-            //create experimental class
-            IExperiment exp = null;
             //start experimental threads
             _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, exp, true, 3000);
             FrameIndex = 0;
@@ -368,6 +384,24 @@ namespace ZebraTrack.ViewModels
         }
 
         #endregion
+        private static MainViewModel _current = null;
+
+        /// <summary>
+        /// Handle to the applications main view model
+        /// </summary>
+        public static MainViewModel Current
+        {
+            get
+            {
+                return _current;
+            }
+            private set
+            {
+                if (_current != null && value != null)
+                    throw new ApplicationException("MainViewModel was created a second time");
+                _current = value;
+            }
+        }
 
         #region Cleanup
 
@@ -379,6 +413,7 @@ namespace ZebraTrack.ViewModels
                 _acquisitionThread.Dispose();
                 _acquisitionThread = null;
             }
+            Current = null;
             base.Dispose(disposing);
         }
 
