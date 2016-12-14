@@ -43,6 +43,7 @@ namespace ZebraTrack.Experiments
         public TrackAndWrite(int expSeconds, int frameRate, string folder, string name, string fishID) : base(folder, name, fishID, expSeconds, frameRate)
         {
             _totalFrames = ExperimentLength * FrameRate;
+            _trackWriter = FileSaver.GetStreamWriter(".track");
         }
 
         public override string StatusMessage
