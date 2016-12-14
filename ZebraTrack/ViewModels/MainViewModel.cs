@@ -57,9 +57,93 @@ namespace ZebraTrack.ViewModels
         /// </summary>
         EZImageSource _fishImage;
 
+        /// <summary>
+        /// The name of the experiment
+        /// </summary>
+        string _experimentName;
+
+        /// <summary>
+        /// The fish name
+        /// </summary>
+        string _fishName;
+
+        /// <summary>
+        /// Comment to go along with the experiment
+        /// </summary>
+        string _comment;
+
+        /// <summary>
+        /// The date of birth of the fish
+        /// </summary>
+        DateTime _dob;
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// The name of the experiment
+        /// </summary>
+        public string ExperimentName
+        {
+            get
+            {
+                return _experimentName;
+            }
+            set
+            {
+                _experimentName = value;
+                RaisePropertyChanged(nameof(ExperimentName));
+            }
+        }
+
+        /// <summary>
+        /// The name of the fish type used
+        /// </summary>
+        public string FishName
+        {
+            get
+            {
+                return _fishName;
+            }
+            set
+            {
+                _fishName = value;
+                RaisePropertyChanged(nameof(FishName));
+            }
+        }
+
+        /// <summary>
+        /// Comment associated with the experiment
+        /// </summary>
+        public string Comment
+        {
+            get
+            {
+                return _comment;
+            }
+            set
+            {
+                _comment = value;
+                RaisePropertyChanged(nameof(Comment));
+            }
+        }
+
+        /// <summary>
+        /// The date of birth of the fish
+        /// </summary>
+        public DateTime DOB
+        {
+            get
+            {
+                return _dob;
+            }
+            set
+            {
+                _dob = value;
+                RaisePropertyChanged(nameof(DOB));
+            }
+        }
 
         /// <summary>
         /// Indicates whether we are running an
@@ -131,6 +215,10 @@ namespace ZebraTrack.ViewModels
 
         public MainViewModel()
         {
+            ExperimentName = "Experiment01";
+            FishName = "TLAB";
+            Comment = "";
+            DOB = DateTime.Now - new TimeSpan(5, 0, 0, 0);
             if (IsInDesignMode)
                 return;
             _mainImage = new EZImageSource();

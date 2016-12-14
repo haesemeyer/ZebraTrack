@@ -10,31 +10,54 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" Background="#FF212121">
     <mhApi:WindowAwareView.Resources>
+        <mhApi:BoolToStopStartConverter x:Key="BoolToStopStartConverter"/>
+        <mhApi:NegateBoolConverter x:Key="NegateBoolConverter"/>
         <vm:MainViewModel x:Key="mvmDataSource"/>
     </mhApi:WindowAwareView.Resources>
     <mhApi:WindowAwareView.DataContext>
         <Binding Source="{StaticResource mvmDataSource}" x:Name="ViewModel" x:FieldModifier="public"/>
     </mhApi:WindowAwareView.DataContext>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="102*"/>
-            <RowDefinition Height="433*"/>
-            <RowDefinition Height="65*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="245*"/>
+            <ColumnDefinition Width="556*"/>
+        </Grid.ColumnDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="337*"/>
-                <ColumnDefinition Width="63*"/>
-            </Grid.ColumnDefinitions>
-            <DrewsClasses:EZImage Grid.Column="1" Margin="10,0" Source="{Binding FishImage, Mode=OneWay}"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="153*"/>
+                <RowDefinition Height="401*"/>
+                <RowDefinition Height="46*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Label x:Name="label" Content="Experiment Name" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" d:LayoutOverrides="HorizontalAlignment"/>
+                <TextBox x:Name="tbExpName" Height="23" Margin="114.694,2.96,10,0" TextWrapping="Wrap" Text="{Binding ExperimentName}" VerticalAlignment="Top" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
+                <Label x:Name="label_Copy" Content="Fish type" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" d:LayoutOverrides="HorizontalAlignment" Margin="0,33,0,0"/>
+                <TextBox x:Name="tbFishName" Margin="114.694,35.96,10,94.04" TextWrapping="Wrap" Text="{Binding FishName}" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
+                <DatePicker Margin="114.694,66.96,10,62.04" d:LayoutOverrides="Height" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}" DisplayDate="{Binding DOB}"/>
+                <Label x:Name="label_Copy1" Content="Date of birth" HorizontalAlignment="Left" Foreground="Gray" Margin="0,66,0,61.04" d:LayoutOverrides="HorizontalAlignment, Height"/>
+                <Label x:Name="label_Copy2" Content="Comment" HorizontalAlignment="Left" Foreground="Gray" Margin="0,0,0,16.04" d:LayoutOverrides="HorizontalAlignment" VerticalAlignment="Bottom"/>
+                <TextBox x:Name="tbComment" Height="56.04" Margin="67.267,0,0,0" TextWrapping="Wrap" Text="{Binding Comment}" VerticalAlignment="Bottom" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
+            </Grid>
+            <TabControl x:Name="tcExperiments" Grid.Row="1" Background="#FF212121" SelectedIndex="0">
+                <TabItem Header="Track and write">
+                    <Grid Background="#FF212121"/>
+                </TabItem>
+            </TabControl>
+            <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="84,12,85.694,12.04" Grid.Row="2" d:LayoutOverrides="Height"/>
         </Grid>
-        <Grid Margin="0,5,0,0" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="57*"/>
-                <ColumnDefinition Width="43*"/>
-            </Grid.ColumnDefinitions>
-            <DrewsClasses:EZImage Margin="0,0,29,1" Source="{Binding MainImage, Mode=OneWay}"/>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="159*"/>
+                <RowDefinition Height="41*"/>
+            </Grid.RowDefinitions>
+            <DrewsClasses:EZImage Margin="39,0,39.806,0.5" Source="{Binding MainImage, Mode=OneWay}"/>
+            <Grid Margin="0,-0.5,0,0" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="159*"/>
+                    <ColumnDefinition Width="397*"/>
+                </Grid.ColumnDefinitions>
+                <DrewsClasses:EZImage Margin="0,0,37.801,2.5" Source="{Binding FishImage, Mode=OneWay}"/>
+            </Grid>
         </Grid>
-
     </Grid>
 </mhApi:WindowAwareView>
