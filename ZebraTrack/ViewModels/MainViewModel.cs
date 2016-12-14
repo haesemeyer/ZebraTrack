@@ -369,10 +369,16 @@ namespace ZebraTrack.ViewModels
 
         #endregion
 
-            #region Cleanup
+        #region Cleanup
 
         protected override void Dispose(bool disposing)
         {
+            //Stop acquisition
+            if(_acquisitionThread != null)
+            {
+                _acquisitionThread.Dispose();
+                _acquisitionThread = null;
+            }
             base.Dispose(disposing);
         }
 
