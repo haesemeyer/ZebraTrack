@@ -40,7 +40,9 @@
             </Grid>
             <TabControl x:Name="tcExperiments" Grid.Row="1" Background="#FF212121" SelectedIndex="0">
                 <TabItem Header="Track and write">
-                    <Grid Background="#FF212121"/>
+                    <Grid Background="#FF212121">
+                        <local:TWExperimentView Margin="12.694,19.04,12.999,0" VerticalAlignment="Top" d:LayoutOverrides="LeftMargin, RightMargin"/>
+                    </Grid>
                 </TabItem>
             </TabControl>
             <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="84,12,85.694,12.04" Grid.Row="2" d:LayoutOverrides="Height"/>
