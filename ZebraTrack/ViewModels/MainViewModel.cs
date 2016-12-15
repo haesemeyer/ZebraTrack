@@ -239,6 +239,7 @@ namespace ZebraTrack.ViewModels
         {
             if (!IsRunning)
                 return;
+            IsRunning = false;
             //shut down experimental threads
             if (_acquisitionThread != null)
                 _acquisitionThread.Dispose();
@@ -246,7 +247,6 @@ namespace ZebraTrack.ViewModels
             //experiment stopped, restart preview
             FrameIndex = 0;
             _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, null, true, 3000);
-            IsRunning = false;
         }
 
         /// <summary>
@@ -272,8 +272,8 @@ namespace ZebraTrack.ViewModels
             if (_acquisitionThread != null)
                 _acquisitionThread.Dispose();
             //start experimental threads
-            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, exp, true, 3000);
             FrameIndex = 0;
+            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, exp, true, 3000);
             IsRunning = true;
         }
 
@@ -390,7 +390,8 @@ namespace ZebraTrack.ViewModels
                     tracker.Dispose();
                 if (fishImage != null)
                     fishImage.Dispose();
-                DispatcherHelper.CheckBeginInvokeOnUI(() => { Stop(); });
+                if(IsRunning)
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => { Stop(); });
             }
         }
 
