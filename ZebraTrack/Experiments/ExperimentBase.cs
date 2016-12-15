@@ -103,6 +103,7 @@ namespace ZebraTrack.Experiments
         {
             infoWriter.WriteLine("Experiment name: {0}", Name);
             infoWriter.WriteLine("Fish name: {0}", FishID);
+            infoWriter.WriteLine("Fish DOB: {0}", DOB);
             infoWriter.WriteLine("------");
             infoWriter.WriteLine("Comment:");
             infoWriter.WriteLine(Comment);

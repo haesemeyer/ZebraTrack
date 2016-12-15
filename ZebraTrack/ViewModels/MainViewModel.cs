@@ -265,6 +265,8 @@ namespace ZebraTrack.ViewModels
                 System.Diagnostics.Debug.WriteLine("No experiment view model was active. Exiting.");
                 return;
             }
+            exp.Comment = Comment;
+            exp.DOB = DOB;
             exp.WriteExperimentInformation();
             //dispose previewthread
             if (_acquisitionThread != null)
