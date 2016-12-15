@@ -84,6 +84,7 @@ namespace ZebraTrack.Experiments
             StartTime = DateTime.Now;
             ExperimentLength = experimentLength;
             FrameRate = frameRate;
+            SuggestedBufferSeconds = null;
         }
 
         /// <summary>
@@ -119,6 +120,8 @@ namespace ZebraTrack.Experiments
         public abstract string StatusMessage { get; }
 
         public abstract bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage);
+
+        public float? SuggestedBufferSeconds { get; protected set; }
         #endregion
 
         #region IDisposable Support

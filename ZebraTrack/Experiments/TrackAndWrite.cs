@@ -44,6 +44,8 @@ namespace ZebraTrack.Experiments
         {
             _totalFrames = ExperimentLength * FrameRate;
             _trackWriter = FileSaver.GetStreamWriter(".track");
+            //This is an open-loop experiment rather not important to stay fully up-to-date
+            SuggestedBufferSeconds = 2;
         }
 
         public override string StatusMessage

@@ -45,5 +45,11 @@ namespace ZebraTrack.Experiments
         /// A status message about the experiment that can be displayed
         /// </summary>
         string StatusMessage { get; }
+
+        /// <summary>
+        /// Suggested length of the buffer - to allow closed loop
+        /// experiments to request a small buffer
+        /// </summary>
+        float? SuggestedBufferSeconds { get; }
     }
 }

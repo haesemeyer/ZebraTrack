@@ -339,7 +339,13 @@ namespace ZebraTrack.ViewModels
                 tracker = InitializeTracker(camera.Width, camera.Height);
                 using(Image8 image = new Image8(camera.Width, camera.Height))
                 {
-                    camera.Start(100);//start camera with 100 frames in buffer
+                    if(experiment != null && experiment.SuggestedBufferSeconds != null)
+                    {
+                        int buffsize = (int)(experiment.SuggestedBufferSeconds.Value * FrameRate);
+                        camera.Start(buffsize > 1 ? buffsize : 1);
+                    }
+                    else
+                        camera.Start(100);//start camera with 100 frames in buffer by default
                     while (!stop.WaitOne(0))
                     {
                         try
