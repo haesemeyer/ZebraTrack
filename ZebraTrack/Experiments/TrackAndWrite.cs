@@ -14,7 +14,6 @@ using System;
 using System.IO;
 using ipp;
 using MHApi.DrewsClasses;
-using MHApi.Imaging;
 
 namespace ZebraTrack.Experiments
 {
@@ -23,7 +22,7 @@ namespace ZebraTrack.Experiments
     /// Very simple experiment class that for a given time
     /// writes fish position and heading to file
     /// </summary>
-    class TrackAndWrite : ExperimentBase
+    class TrackAndWrite : TrackingExperiment
     {
         /// <summary>
         /// The last frame that was processed
@@ -40,10 +39,11 @@ namespace ZebraTrack.Experiments
         /// </summary>
         StreamWriter _trackWriter;
         
-        public TrackAndWrite(int expSeconds, int frameRate, string folder, string name, string fishID) : base(folder, name, fishID, expSeconds, frameRate)
+        public TrackAndWrite(int expSeconds, int frameRate, int pxPERmm, string folder, string name, string fishID) : base(folder, name, fishID, expSeconds, frameRate, pxPERmm)
         {
             _totalFrames = ExperimentLength * FrameRate;
-            _trackWriter = FileSaver.GetStreamWriter(".track");
+            if(FileSaver != null)
+                _trackWriter = FileSaver.GetStreamWriter(".track");
             //This is an open-loop experiment rather not important to stay fully up-to-date
             SuggestedBufferSeconds = 2;
         }
@@ -75,15 +75,22 @@ namespace ZebraTrack.Experiments
         /// <param name="heading">The heading of the fish</param>
         /// <param name="fishImage">Subregion image of the fish</param>
         /// <returns></returns>
-        public override bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage)
+        public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
+            base.ProcessNext(frameNumber, camImage, out poi);
             _lastFrame = frameNumber;
             if (frameNumber >= _totalFrames)
                 return false;
+            var fish = Tracker.Track(camImage);
             if (fish != null)
-                _trackWriter.WriteLine("{0}\t{1}\t{2}\t{3}", frameNumber, fish.Centroid.x, fish.Centroid.y, fish.Angle);
-            else
-                _trackWriter.WriteLine("NaN\tNaN\tNaN\tNaN");
+                poi = new IppiPoint(fish.Centroid.x, fish.Centroid.y);
+            if (_trackWriter != null)
+            {
+                if (fish != null)
+                    _trackWriter.WriteLine("{0}\t{1}\t{2}\t{3}", frameNumber, fish.Centroid.x, fish.Centroid.y, fish.Angle);
+                else
+                    _trackWriter.WriteLine("NaN\tNaN\tNaN\tNaN");
+            }
             return true;
         }
 

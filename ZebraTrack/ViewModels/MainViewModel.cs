@@ -227,7 +227,8 @@ namespace ZebraTrack.ViewModels
                 return;
             _mainImage = new EZImageSource();
             _fishImage = new EZImageSource();
-            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, null, true, 3000);
+            var preview = new PreviewTrack(Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm);
+            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, preview, true, 3000);
         }
 
         #region Methods
@@ -246,7 +247,8 @@ namespace ZebraTrack.ViewModels
 
             //experiment stopped, restart preview
             FrameIndex = 0;
-            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, null, true, 3000);
+            var preview = new PreviewTrack(Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm);
+            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, preview, true, 3000);
         }
 
         /// <summary>
@@ -351,16 +353,15 @@ namespace ZebraTrack.ViewModels
                         try
                         {
                             FrameIndex = camera.Extract(image, FrameIndex) + 1;
-                            BlobWithMoments fish = tracker.Track(image);
+                            IppiPoint? fishCentroid = null;
+                            if (experiment != null)
+                                if (!experiment.ProcessNext((int)FrameIndex, image, out fishCentroid))
+                                    break;
 
                             //blank the fish image and if a fish was found display region around it
                             ip.ippiSet_8u_C1R(0, fishImage.Image, fishImage.Stride, fishImage.Size);
-                            if (fish != null)
-                                CopyRegionImage(fish.Centroid, fishImage, image);
-
-                            if (experiment != null)
-                                if (!experiment.ProcessNext((int)FrameIndex, fish, fishImage))
-                                    break;
+                            if (fishCentroid != null)
+                                CopyRegionImage(fishCentroid.Value, fishImage, image);
 
                             //at 10Hz display camera and fish image
                             if(FrameIndex % (FrameRate / 10) == 0)

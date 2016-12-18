@@ -12,7 +12,7 @@ Copyright 2016 Martin Haesemeyer
 
 using System;
 using System.IO;
-using MHApi.Imaging;
+using ipp;
 using MHApi.DrewsClasses;
 
 namespace ZebraTrack.Experiments
@@ -75,12 +75,16 @@ namespace ZebraTrack.Experiments
         /// <param name="frameRate">The acquisition framerate</param>
         public ExperimentBase(string folder, string name, string fishID, int experimentLength, int frameRate)
         {
-            if (!Path.IsPathRooted(folder))
+            if (folder != "" && !Path.IsPathRooted(folder))
                 throw new ArgumentException("folder needs to be a rooted path", nameof(folder));
-            FileSaver = new Saver(folder, name + '_' + fishID, true);
+            if (folder != "")
+                FileSaver = new Saver(folder, name + '_' + fishID, true);
+            else
+                FileSaver = null;
             Name = name;
             FishID = fishID;
-            _infoWriter = FileSaver.GetStreamWriter(".info");
+            if (FileSaver != null)
+                _infoWriter = FileSaver.GetStreamWriter(".info");
             StartTime = DateTime.Now;
             ExperimentLength = experimentLength;
             FrameRate = frameRate;
@@ -102,16 +106,19 @@ namespace ZebraTrack.Experiments
         /// <param name="infoWriter"></param>
         protected virtual void WriteExperimentInfo(StreamWriter infoWriter)
         {
-            infoWriter.WriteLine("Experiment name: {0}", Name);
-            infoWriter.WriteLine("Fish name: {0}", FishID);
-            infoWriter.WriteLine("Fish DOB: {0}", DOB);
-            infoWriter.WriteLine("------");
-            infoWriter.WriteLine("Comment:");
-            infoWriter.WriteLine(Comment);
-            infoWriter.WriteLine("------");
-            infoWriter.WriteLine("Start date: {0}", StartTime.ToShortDateString());
-            infoWriter.WriteLine("Start Time: {0}", StartTime.ToShortTimeString());
-            infoWriter.WriteLine("");
+            if (infoWriter != null)
+            {
+                infoWriter.WriteLine("Experiment name: {0}", Name);
+                infoWriter.WriteLine("Fish name: {0}", FishID);
+                infoWriter.WriteLine("Fish DOB: {0}", DOB);
+                infoWriter.WriteLine("------");
+                infoWriter.WriteLine("Comment:");
+                infoWriter.WriteLine(Comment);
+                infoWriter.WriteLine("------");
+                infoWriter.WriteLine("Start date: {0}", StartTime.ToShortDateString());
+                infoWriter.WriteLine("Start Time: {0}", StartTime.ToShortTimeString());
+                infoWriter.WriteLine("");
+            }
         }
 
 
@@ -119,7 +126,7 @@ namespace ZebraTrack.Experiments
         public abstract int SecondsRemaining { get; }
         public abstract string StatusMessage { get; }
 
-        public abstract bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage);
+        public abstract bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi);
 
         public float? SuggestedBufferSeconds { get; protected set; }
         #endregion

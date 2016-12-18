@@ -31,10 +31,10 @@ namespace ZebraTrack.Experiments
         /// Processes the next frame
         /// </summary>
         /// <param name="frameNumber">The index of the current frame</param>
-        /// <param name="fish">The tracked fish object</param>
-        /// <param name="fishImage">Small ROI image of the fish for further processing</param>
+        /// <param name="camImage">The current camera frame</param>
+        /// <param name="poi">Optionally hands back a point of interest such as a fish centroid to caller</param>
         /// <returns>True if the experiment should continue</returns>
-        bool ProcessNext(int frameNumber, BlobWithMoments fish, Image8 fishImage);
+        bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi);
 
         /// <summary>
         /// The number of seconds remaining in the experiment

@@ -11,5 +11,8 @@
     <Setting Name="SavePath" Type="System.String" Scope="Application">
       <Value Profile="(Default)">E:\\Behavior\\</Value>
     </Setting>
+    <Setting Name="PixelsPermm" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">9</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

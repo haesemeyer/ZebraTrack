@@ -54,7 +54,7 @@ namespace ZebraTrack.ViewModels
         public ExperimentBase CreateExperiment(string name, string fishID)
         {
             string folder = Path.Combine(Properties.Settings.Default.SavePath,"TrackAndWrite");
-            return new TrackAndWrite(_experimentLength, Properties.Settings.Default.FrameRate, folder, name, fishID);
+            return new TrackAndWrite(_experimentLength, Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm, folder, name, fishID);
         }
     }
 }
