@@ -314,22 +314,9 @@ namespace ZebraTrack.ViewModels
             IsRunning = true;
         }
 
-        Tracker90mmDish InitializeTracker(int imageWidth, int imageHeight)
-        {
-            IppiPoint dishCenter = new IppiPoint(imageWidth / 2, imageHeight / 2);
-            Tracker90mmDish retval = new Tracker90mmDish(imageWidth, imageHeight, dishCenter);
-            retval.BGUpdateEvery = FrameRate / 10;//update background at 10 Hz only
-            retval.FramesInBackground = 30 * FrameRate / retval.BGUpdateEvery;//this is 30s of background
-            retval.FramesInitialBackground = 120 * FrameRate;
-            retval.Threshold = 6;
-            retval.MinArea = 18;
-            retval.MaxAllowedArea = 250;
-            retval.MinEccentricity = 0.3;
-            retval.FullTrustMinArea = 30;
-            retval.SearchRegionSize = 90;
-            retval.RemoveCMOSISBrightLineArtefact = false;
-            return retval;
-        }
+
+
+
 
         /// <summary>
         /// Safely copies region around given centroid
@@ -370,11 +357,9 @@ namespace ZebraTrack.ViewModels
             //Set up image for small region around fish
             Image8 fishImage = new Image8(60, 60);
             CameraLinkCamera camera = null;
-            Tracker90mmDish tracker = null;
             try
             {
                 camera = new CameraLinkCamera(Properties.Settings.Default.CameraInterface);
-                tracker = InitializeTracker(camera.Width, camera.Height);
                 using(Image8 image = new Image8(camera.Width, camera.Height))
                 {
                     if(experiment != null && experiment.SuggestedBufferSeconds != null)
@@ -458,8 +443,6 @@ namespace ZebraTrack.ViewModels
                     (experiment as IDisposable).Dispose();
                 if(camera != null)
                     camera.Dispose();
-                if (tracker != null)
-                    tracker.Dispose();
                 if (fishImage != null)
                     fishImage.Dispose();
                 if(IsRunning)
