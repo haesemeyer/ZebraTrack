@@ -50,15 +50,12 @@ namespace ZebraTrack.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("9")]
         public int PixelsPermm {
             get {
                 return ((int)(this["PixelsPermm"]));
-            }
-            set {
-                this["PixelsPermm"] = value;
             }
         }
     }
