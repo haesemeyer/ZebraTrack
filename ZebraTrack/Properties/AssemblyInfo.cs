@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HarvardUniversity")]
 [assembly: AssemblyProduct("ZebraTrack")]
-[assembly: AssemblyCopyright("Copyright © HarvardUniversity 2016")]
+[assembly: AssemblyCopyright("Copyright © Martin Haesemeyer 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
