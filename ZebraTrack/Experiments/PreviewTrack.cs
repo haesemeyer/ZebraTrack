@@ -14,6 +14,44 @@ namespace ZebraTrack.Experiments
     /// </summary>
     class PreviewTrack : TrackingExperiment
     {
+        /// <summary>
+        /// If available the background image of the tracker
+        /// </summary>
+        public Image8 Background
+        {
+            get
+            {
+                return Tracker != null ? Tracker.Background : null;
+            }
+        }
+
+        /// <summary>
+        /// If available the foreground image of the tracker
+        /// </summary>
+        public Image8 Foreground
+        {
+            get
+            {
+                return Tracker != null ? Tracker.BGSubtracted : null;
+            }
+        }
+
+        /// <summary>
+        /// If available the tresholded foreground of the tracker
+        /// </summary>
+        public Image8 Thresholded
+        {
+            get
+            {
+                return Tracker != null ? Tracker.Foreground : null;
+            }
+        }
+
+        /// <summary>
+        /// Create a new PreviewTrack experiment
+        /// </summary>
+        /// <param name="frameRate">The acquisition framerate</param>
+        /// <param name="pxPERmm">The acquisition resolution</param>
         public PreviewTrack(int frameRate, int pxPERmm) : base("", "", "", 0, frameRate, pxPERmm)
         {
         }

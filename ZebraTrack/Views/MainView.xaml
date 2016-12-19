@@ -10,6 +10,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" Background="#FF212121">
     <mhApi:WindowAwareView.Resources>
+        <mhApi:EnumStringConverter x:Key="EnumStringConverter"/>
         <mhApi:BoolToStopStartConverter x:Key="BoolToStopStartConverter"/>
         <mhApi:NegateBoolConverter x:Key="NegateBoolConverter"/>
         <vm:MainViewModel x:Key="mvmDataSource"/>
@@ -61,6 +62,8 @@
                 <DrewsClasses:EZImage Margin="0,0,37.801,2.5" Source="{Binding FishImage, Mode=OneWay}"/>
                 <Label x:Name="label_Copy3" Content="Frame Index:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="Gray" Margin="10,0,0,3.5" Grid.Column="1" d:LayoutOverrides="HorizontalAlignment"/>
                 <Label x:Name="label_Copy4" Content="{Binding FrameIndex, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="Gray" Margin="94,0,0,3.5" Grid.Column="1" d:LayoutOverrides="HorizontalAlignment" Width="95.47"/>
+                <Label x:Name="label_Copy5" Content="Display:" HorizontalAlignment="Left" Foreground="Gray" Margin="10,5.636,0,0" Grid.Column="1" d:LayoutOverrides="HorizontalAlignment" VerticalAlignment="Top"/>
+                <ComboBox x:Name="comboBox" Grid.Column="1" Margin="75.068,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="119.99" ItemsSource="{Binding DisplayTypeNames}" SelectedValue="{Binding DisplayImage, Converter={StaticResource EnumStringConverter}}" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
             </Grid>
         </Grid>
     </Grid>

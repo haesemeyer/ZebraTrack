@@ -31,6 +31,8 @@ namespace ZebraTrack.ViewModels
 {
     unsafe class MainViewModel : ViewModelBase
     {
+        public enum ImageType { Camera=0, Background=1, Foreground=2, Thresholded=3};
+
         #region Members
 
         /// <summary>
@@ -79,9 +81,41 @@ namespace ZebraTrack.ViewModels
         /// </summary>
         DateTime _dob;
 
+        /// <summary>
+        /// The type of image to display during preview
+        /// </summary>
+        ImageType _displayImage;
+
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// String representation of our image types
+        /// </summary>
+        public string[] DisplayTypeNames
+        {
+            get
+            {
+                return Enum.GetNames(typeof(ImageType));
+            }
+        }
+
+        /// <summary>
+        /// The type of image to display during preview
+        /// </summary>
+        public ImageType DisplayImage
+        {
+            get
+            {
+                return _displayImage;
+            }
+            set
+            {
+                _displayImage = value;
+                RaisePropertyChanged(nameof(DisplayImage));
+            }
+        }
 
         /// <summary>
         /// The name of the experiment
@@ -223,6 +257,7 @@ namespace ZebraTrack.ViewModels
             FishName = "TLAB";
             Comment = "";
             DOB = DateTime.Now - new TimeSpan(5, 0, 0, 0);
+            DisplayImage = ImageType.Camera;
             if (IsInDesignMode)
                 return;
             _mainImage = new EZImageSource();
@@ -359,16 +394,51 @@ namespace ZebraTrack.ViewModels
                                 if (!experiment.ProcessNext((int)FrameIndex, image, out fishCentroid))
                                     break;
 
-                            //blank the fish image and if a fish was found display region around it
-                            ip.ippiSet_8u_C1R(0, fishImage.Image, fishImage.Stride, fishImage.Size);
-                            if (fishCentroid != null)
-                                CopyRegionImage(fishCentroid.Value, fishImage, image);
-
                             //at 10Hz display camera and fish image
                             if(FrameIndex % (FrameRate / 10) == 0)
                             {
-                                MainImage.Write(image, stop);
-                                FishImage.Write(fishImage, stop);
+                                //blank the fish image
+                                ip.ippiSet_8u_C1R(0, fishImage.Image, fishImage.Stride, fishImage.Size);
+                                if (experiment is PreviewTrack && DisplayImage != ImageType.Camera)
+                                {
+                                    Image8 toHandle = null;
+                                    PreviewTrack pt = experiment as PreviewTrack;
+                                    switch (DisplayImage)
+                                    {
+                                        case ImageType.Background:
+                                            toHandle = pt.Background;
+                                            MainImage.CMax = 255;
+                                            FishImage.CMax = 255;
+                                            break;
+                                        case ImageType.Foreground:
+                                            toHandle = pt.Foreground;
+                                            MainImage.CMax = 255;
+                                            FishImage.CMax = 255;
+                                            break;
+                                        default:
+                                            toHandle = pt.Thresholded;
+                                            MainImage.CMax = 1;
+                                            FishImage.CMax = 1;
+                                            break;
+                                    }
+                                    if(toHandle != null)
+                                    {
+                                        if (fishCentroid != null)
+                                            CopyRegionImage(fishCentroid.Value, fishImage, toHandle);
+                                        MainImage.Write(toHandle, stop);
+                                        FishImage.Write(fishImage, stop);
+                                    }
+                                }
+                                else
+                                {
+                                    
+                                    if (fishCentroid != null)
+                                        CopyRegionImage(fishCentroid.Value, fishImage, image);
+                                    MainImage.CMax = 255;
+                                    FishImage.CMax = 255;
+                                    MainImage.Write(image, stop);
+                                    FishImage.Write(fishImage, stop);
+                                }
                             }
                         }
                         catch (OperationCanceledException)
