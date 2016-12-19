@@ -314,9 +314,23 @@ namespace ZebraTrack.ViewModels
             IsRunning = true;
         }
 
+        /// <summary>
+        /// Restarts image preview
+        /// </summary>
+        void RestartPreview()
+        {
+            //Don't do this while an experiment is running
+            if (IsRunning)
+                return;
+            //shut down acquisition thread
+            if (_acquisitionThread != null)
+                _acquisitionThread.Dispose();
 
-
-
+            //restart preview
+            FrameIndex = 0;
+            var preview = new PreviewTrack(Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm);
+            _acquisitionThread = new WorkerT<IExperiment>(TrackThreadRun, preview, true, 3000);
+        }
 
         /// <summary>
         /// Safely copies region around given centroid
@@ -452,6 +466,8 @@ namespace ZebraTrack.ViewModels
 
         #endregion
 
+        #region Command sinks
+
         RelayCommand _startStopClick;
 
         /// <summary>
@@ -466,6 +482,23 @@ namespace ZebraTrack.ViewModels
                 return _startStopClick;
             }
         }
+
+        RelayCommand _restartPreviewClick;
+
+        /// <summary>
+        /// The command that handles restarting of image preview
+        /// </summary>
+        public ICommand RestartPreviewClick
+        {
+            get
+            {
+                if (_restartPreviewClick == null)
+                    _restartPreviewClick = new RelayCommand(param => { if (!IsRunning) RestartPreview(); });
+                return _restartPreviewClick;
+            }
+        }
+
+        #endregion
 
 
         #region Cleanup

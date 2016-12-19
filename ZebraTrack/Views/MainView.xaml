@@ -46,7 +46,8 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-            <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="84,12,85.694,12.04" Grid.Row="2" d:LayoutOverrides="Height" Command="{Binding StartStopClick, Mode=OneWay}"/>
+            <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="30.314,12,0,12.04" Grid.Row="2" d:LayoutOverrides="Height" Command="{Binding StartStopClick, Mode=OneWay}" HorizontalAlignment="Left" Width="75"/>
+            <Button x:Name="button1" Content="Restart preview" HorizontalAlignment="Right" Margin="0,12,24.43,12.04" Grid.Row="2" Width="89.211" d:LayoutOverrides="Height" Command="{Binding RestartPreviewClick, Mode=OneWay}"/>
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
