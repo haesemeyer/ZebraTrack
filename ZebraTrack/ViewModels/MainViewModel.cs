@@ -317,12 +317,13 @@ namespace ZebraTrack.ViewModels
                 destY -= copyStart.y;
                 copyStart.y = 0;
             }
-            IppiSize copySize = new IppiSize(regionImage.Width, regionImage.Height);
+            IppiSize copySize = new IppiSize(regionImage.Width - destX, regionImage.Height - destY);
             if (copyStart.x + copySize.width > image.Width)
                 copySize.width = image.Width - copyStart.x;
             if (copyStart.y + copySize.height > image.Height)
                 copySize.height = image.Height - copyStart.y;
-            ip.ippiCopy_8u_C1R(image[copyStart], image.Stride, regionImage[destX, destY], regionImage.Stride, copySize);
+            if (copySize.width > 0 && copySize.height > 0)
+                ip.ippiCopy_8u_C1R(image[copyStart], image.Stride, regionImage[destX, destY], regionImage.Stride, copySize);
         }
 
         #endregion
