@@ -65,6 +65,17 @@ namespace ZebraTrack.Experiments
             return retval;
         }
 
+        protected override void WriteExperimentInfo(StreamWriter infoWriter)
+        {
+            base.WriteExperimentInfo(infoWriter);
+            if(infoWriter != null)
+            {
+                infoWriter.WriteLine("Frame rate: {0} Hz", FrameRate);
+                infoWriter.WriteLine("Resolution: {0} px/mm", PixelsPermm);
+                infoWriter.WriteLine();
+            }
+        }
+
         public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
             //create tracker if necessary
