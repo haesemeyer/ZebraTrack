@@ -4,13 +4,22 @@ layout: default
 
 ## Overview
 [ZebraTrack](https://github.com/haesemeyer/ZebraTrack) is as a lightweight program
-to track larval zebrafish in realtime and perform behavioral experiments.
+to track freely swimming larval zebrafish in realtime and perform behavioral experiments.
+A simple [User interface]({{ github.site.url }}/user_interface/) relays a high-speed
+camera feed and allows selecting experimental parameters as well as running experiments.
 {% include image.html
     img="assets/scr/UI_CamImage.png"
     title="User interface"
-    width="300"
-    url="/user_interface/"
+    width="400"
     caption="User interface" %}
+Different experimental paradigms can be implemented by extending [experiment]({{ github.site.url }}/exp_class/)
+base classes. This allows to flexibly
+implement both open loop and closed loop experiments. Currently a very simple open-loop
+"experiment" which writes position and heading information to file is implemented as and
+example.
+
+## Design
+
 
 ## Dependencies
 ZebraTrack depends on [MhApi](https://github.com/haesemeyer/mhapi) as well as the
