@@ -3,8 +3,9 @@ layout: default
 ---
 
 ## Overview
-[ZebraTrack](https://github.com/haesemeyer/ZebraTrack) is as a lightweight program
-to track freely swimming larval zebrafish in realtime and perform behavioral experiments.
+{% include github-link.html link="haesemeyer/ZebraTrack" name="ZebraTrack" %}
+is as a lightweight program to track freely swimming larval zebrafish in realtime
+and perform behavioral experiments.
 A simple [User interface]({{ github.site.url }}/user_interface/) relays a high-speed
 camera feed and allows selecting experimental parameters as well as running experiments.
 {% include image.html
@@ -15,13 +16,31 @@ camera feed and allows selecting experimental parameters as well as running expe
 Different experimental paradigms can be implemented by extending [experiment]({{ github.site.url }}/exp_class/)
 base classes. This allows to flexibly
 implement both open loop and closed loop experiments. Currently a very simple open-loop
-"experiment" which writes position and heading information to file is implemented as and
+"experiment" which writes position and heading information to file is implemented as an
 example.
 
 ## Data acquisition and processing
+{% include image.html
+    img="assets/data/Tracking_Example.png"
+    title="Behavior example"
+    width="800"
+    caption="Behavior example (14s of data at 700 Hz)" %}
 Currently data acquisition is limited to camera link cameras via a National Instruments
 frame grabber. However, support for general NI Vision and Point Grey cameras is planned
-for the near future.
+for a future release.
+
+Using multi-threading data is continuously acquired. On each frame the fishes position
+and heading angle are determined within less than 1 ms. This is largely possible because
+tracking is restricted to an image region centered around the last fish position. The size
+of the image region is determined heuristically based on imaging framerate and image
+resolution together with known behavioral parameters of larval zebrafish.  
+Larval zebrafish are identified as a foreground object by subtracting a background model
+of the enclosure. Since lighting conditions as well as water levels in the behavioral arena
+can change over the course of an experiment, the background model is continuously updated.
+To avoid having a stationary fish enter the background model, the current fish location is
+excluded from all background updates.
+
+
 
 ## Dependencies
 ZebraTrack depends on {% include github-link.html link="haesemeyer/mhapi" name="MHApi" %}
