@@ -13,7 +13,7 @@ camera feed and allows selecting experimental parameters as well as running expe
     title="User interface"
     width="400"
     caption="User interface" %}
-Different experimental paradigms can be implemented by extending [experiment]({{ site.github.url }}/exp_class/)
+Different experimental paradigms can be implemented by extending [experiment]({{ site.github.url }}/experiments/)
 base classes. This allows to flexibly
 implement both open loop and closed loop experiments. Currently a very simple open-loop
 "experiment" which writes position and heading information to file is implemented as an
