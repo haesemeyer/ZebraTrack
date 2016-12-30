@@ -39,7 +39,7 @@ paradigm with individual Views (UserControls) presenting data to and collecting 
 the user while the ViewModel stores that data.  
 All experiment view models are required to implement the IExperimentVM interface which
 requires the implementation of one method, CreateExperiment. This method should create an
-[Experimental class]({{ github.site.url }}/experiments/) based on the user selections in
+[Experimental class]({{ site.github.url }}/experiments/) based on the user selections in
 the tab. 
 {% highlight c# %}
 interface IExperimentVM
