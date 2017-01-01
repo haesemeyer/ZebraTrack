@@ -17,14 +17,14 @@ restart the preview, including fresh background generation.
 {% include image.html
     img="assets/scr/UI_CamImage.png"
     title="User interface"
-    width="400"
+    width="500"
     caption="Camera feed" %}
 During Preview mode, it is possible to select different tracker intermediate images for
 display instead of the camera feed via the combo-box below the main image.
 {% include image.html
     img="assets/scr/Views.png"
     title="Tracking views"
-    width="400"
+    width="500"
     caption="Preview tracking views" %}
 These views are useful to trouble-shoot tracker settings such as turnover of the background
 model or the threshold value for foreground extraction.
