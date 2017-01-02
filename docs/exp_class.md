@@ -4,9 +4,9 @@ title: Experiments
 permalink: /experiments/
 ---
 
-Experimental paradigms are implemented as separate classes that define the what data
+Experimental paradigms are implemented as separate classes that define the data that
 should be extracted from the images, what should be written to file and which stimuli
-should be generated, if any. All experimental classes are required to implement the
+should be generated. All experimental classes are required to implement the
 following interface so that the main program can properly interact with them:
 {% highlight c# %}
 interface IExperiment
