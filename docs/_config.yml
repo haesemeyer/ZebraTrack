@@ -14,6 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: ZebraTrack
+author: <a href="https://haesemeyer.github.io/">Martin Haesemeyer</a>
 email: haesemeyer@fas.harvard.edu
 description: > # this means to ignore newlines until "baseurl:"
   ZebraTrack is a program for online tracking of larval zebrafish at high
