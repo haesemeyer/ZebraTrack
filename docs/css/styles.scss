@@ -1,0 +1,15 @@
+---
+---
+
+$caption-color: #505060;
+
+// image with caption style
+.image-wrapper {
+    text-align: center;
+
+    .image-caption {
+        color: $caption-color;
+        font-size: 90%;
+        font-weight: bold;
+    }
+}
