@@ -6,3 +6,4 @@ See [website](https://haesemeyer.github.io/ZebraTrack/) for more detailed inform
 
 Depends on [MHApi](https://github.com/haesemeyer/mhapi).
 
+[![DOI](https://zenodo.org/badge/76370638.svg)](https://zenodo.org/badge/latestdoi/76370638)
