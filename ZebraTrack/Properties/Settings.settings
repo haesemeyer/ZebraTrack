@@ -14,11 +14,14 @@
     <Setting Name="PixelsPermm" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">9</Value>
     </Setting>
-    <Setting Name="MirrorXVC" Type="System.Single" Scope="Application">
-      <Value Profile="(Default)">2</Value>
+    <Setting Name="MirrorXVAln" Type="System.Single" Scope="Application">
+      <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="MirrorYVC" Type="System.Single" Scope="Application">
-      <Value Profile="(Default)">2</Value>
+    <Setting Name="MirrorYVAln" Type="System.Single" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="MirrorDOptPerV" Type="System.Single" Scope="Application">
+      <Value Profile="(Default)">3</Value>
     </Setting>
   </Settings>
 </SettingsFile>
