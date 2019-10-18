@@ -24,6 +24,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MHApi.Imaging;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace ZebraTrack.Experiments
 {
@@ -46,6 +47,102 @@ namespace ZebraTrack.Experiments
     /// </remarks>
     unsafe class LaserAlignment : ExperimentBase
     {
+        /// <summary>
+        /// Type to describe the current experimental phase
+        /// </summary>
+        public enum ExperimentPhases { BGround = 0, ThreePoint = 1, InterpTable = 2, Done = 3 }
+
+        /// <summary>
+        /// Container for the points identified during 3-point calibration
+        /// </summary>
+        class CalibrationPoints
+        {
+            /// <summary>
+            /// The origin at vx=vy=0
+            /// </summary>
+            public IppiPoint Origin = new IppiPoint(-1, -1);
+
+            /// <summary>
+            /// The point when moving the xmirror while keeping vy=0
+            /// </summary>
+            public IppiPoint XMove = new IppiPoint(-1, -1);
+
+            /// <summary>
+            /// The point when moving the ymirror while keeping vx=0
+            /// </summary>
+            public IppiPoint YMove = new IppiPoint(-1, -1);
+        }
+
+        /// <summary>
+        /// Collects all information related to the interpolation
+        /// lookup table construction
+        /// </summary>
+        class InterpolationParams
+        {
+            /// <summary>
+            /// For each pixel we have accumulated as error correct
+            /// mirrors by this many volts
+            /// </summary>
+            public const float VoltsPerErrorPixel = 0.0005f;
+
+            /// <summary>
+            /// Accumulated x error in pixels
+            /// </summary>
+            public int XError = 0;
+
+            /// <summary>
+            /// Accumulated y error in pixels
+            /// </summary>
+            public int YError = 0;
+
+            /// <summary>
+            /// Indicates whether a request has been satisfied
+            /// and a new point should be requested
+            /// </summary>
+            public bool RequestDealt = true;//initially true to request first point
+
+            /// <summary>
+            /// Inidicates that we are currently walking the beam
+            /// to find a requested point
+            /// </summary>
+            public bool Walking;
+
+            /// <summary>
+            /// For each point keeps track of the frame count
+            /// </summary>
+            public int StepFrame = 0;
+
+            /// <summary>
+            /// The number of times we tried to find a point from scratch
+            /// </summary>
+            public int RetryCount = 0;
+
+            /// <summary>
+            /// The next point that should be targeted and found
+            /// </summary>
+            public IppiPoint NextRequest = new IppiPoint();
+
+            /// <summary>
+            /// The currently identified position of the laser
+            /// </summary>
+            public IppiPoint CurrentPoint = new IppiPoint();
+
+            /// <summary>
+            /// The voltages delived to the mirror for the current point
+            /// </summary>
+            public IppiPoint_32f CurrentVolts = new IppiPoint_32f();
+
+            /// <summary>
+            /// The scanning lookup table we build
+            /// </summary>
+            public BLIScanLookupTable LookupTable;
+        }
+
+        /// <summary>
+        /// The current experimental phase
+        /// </summary>
+        ExperimentPhases _experimentPhase = ExperimentPhases.BGround;
+
         /// <summary>
         /// Transformations assume that beam is perpendicular to the stage at this voltage
         /// </summary>
@@ -78,6 +175,12 @@ namespace ZebraTrack.Experiments
         DynamicBackgroundModel _bgModel;
 
         /// <summary>
+        /// Use second "background" model to average
+        /// foreground images
+        /// </summary>
+        DynamicBackgroundModel _fgModel;
+
+        /// <summary>
         /// Image for calculation intermediates
         /// </summary>
         Image8 _calc;
@@ -93,11 +196,41 @@ namespace ZebraTrack.Experiments
         byte* _markerBuffer;
 
         /// <summary>
+        /// Keeps track of the current frame in the three-point calibration
+        /// </summary>
+        int _threePointFrame;
+
+        /// <summary>
+        /// The points identified during 3-point calibration
+        /// </summary>
+        CalibrationPoints _threePointPoints;
+
+        /// <summary>
+        /// The parameters used when building interpolation table
+        /// </summary>
+        InterpolationParams _interpParams;
+
+        /// <summary>
+        /// The controller of the laser we use
+        /// </summary>
+        SDLPS500Controller _laser;
+
+        /// <summary>
+        /// The laser positioning scanner
+        /// </summary>
+        RandomAccessScanner _scanner;
+
+        /// <summary>
         /// Creates a new LaserAlignment object
         /// </summary>
         /// <param name="frameRate">The frameRate of the experiment</param>
         public LaserAlignment(int frameRate) : base("", "", "", 0, frameRate)
         {
+            //TODO: Here we should probably get information about actual ROI to use as well as where to store calibration data
+            _laser = new SDLPS500Controller(Properties.Settings.Default.DAQ, Properties.Settings.Default.LaserAO);
+            string xchannel = Properties.Settings.Default.DAQ + "/" + Properties.Settings.Default.ScannerX;
+            string ychannel = Properties.Settings.Default.DAQ + "/" + Properties.Settings.Default.ScannerY;
+            _scanner = new RandomAccessScanner(null, xchannel, ychannel, -10, 10);
         }
 
         #region Properties
@@ -225,13 +358,14 @@ namespace ZebraTrack.Experiments
         /// <param name="frameNumber">The current camera frame number</param>
         /// <param name="camImage">The camera image</param>
         /// <param name="poi">A detected centroid (all null)</param>
-        /// <returns>True</returns>
-        protected bool BuildBackground(int frameNumber, Image8 camImage, out IppiPoint? poi)
+        protected void BuildBackground(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
+            _laser.LaserPower = 0;
             poi = null;
             if (frameNumber == 0 || _bgModel == null)
             {
                 _bgModel = new DynamicBackgroundModel(camImage, 1.0f / Properties.Settings.Default.FrameRate);
+                _fgModel = new DynamicBackgroundModel(camImage, 5.0f / Properties.Settings.Default.FrameRate);
                 //Create image intermediates
                 _calc = new Image8(camImage.Size);
                 _foreground = new Image8(camImage.Size);
@@ -247,7 +381,42 @@ namespace ZebraTrack.Experiments
             }
             else
                 _bgModel.UpdateBackground(camImage);
-            return true;
+            if (frameNumber >= Properties.Settings.Default.FrameRate * 5)
+            {
+                _experimentPhase = ExperimentPhases.ThreePoint;
+                _threePointFrame = 0;
+                _threePointPoints = new CalibrationPoints();
+            }
+        }
+
+        /// <summary>
+        /// Method to perform all necessary steps to find one calibration point
+        /// in three-point calibration
+        /// </summary>
+        /// <param name="frame">Frame number 0-based from start of operation</param>
+        /// <param name="camImage">The current camera image</param>
+        /// <param name="voltages">The voltages to move laser to</param>
+        /// <returns>-1,-1 or the identified point</returns>
+        protected IppiPoint MoveAndDetect(int frame, Image8 camImage, IppiPoint_32f voltages)
+        {
+            if (frame < Properties.Settings.Default.FrameRate / 10)
+            {
+                //In the first 100 ms we just give the scanner ample time to reach the target
+                _scanner.Hit(voltages);
+                return new IppiPoint(-1, -1);
+            }
+            else if (frame < Properties.Settings.Default.FrameRate * 1.1)
+            {
+                //In the next second we build our foreground
+                _laser.LaserPower = Properties.Settings.Default.LaserCalibPowermW;
+                _fgModel.UpdateBackground(camImage);
+                return new IppiPoint(-1, -1);
+            }
+            else
+            {
+                //Let's find the beam location and return it
+                return FindBeamLocation(_fgModel.Background, _bgModel.Background, _calc, _foreground);
+            }
         }
 
         /// <summary>
@@ -256,10 +425,217 @@ namespace ZebraTrack.Experiments
         /// <param name="frameNumber">The current camera frame number</param>
         /// <param name="camImage">The camera image</param>
         /// <param name="poi">The detected beam centroid</param>
-        /// <returns>True</returns>
-        protected bool ThreePointCalibration(int frameNumber, Image8 camImage, out IppiPoint? poi)
+        protected void ThreePointCalibration(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
+            poi = null;
+            //Points not set in _threePointPoints are set to -1,-1. Use this to track which point we handle right now
+            if(_threePointPoints.Origin.x == -1)
+            {
+                //Work on origin
+                var p = MoveAndDetect(_threePointFrame, camImage, new IppiPoint_32f(0.0f, 0.0f));
+                if (p.x != -1)
+                {
+                    //found the point
+                    _threePointFrame = -1;//will be incremented to 0 below!
+                    _threePointPoints.Origin = new IppiPoint(p.x, p.y);
+                    _p0 = new IppiPoint(p.x, p.y);//set our origin coordinates for later calculations
+                    poi = p;
+                    //reset foreground in preparation for x movement
+                    _fgModel.Dispose();
+                    _fgModel = new DynamicBackgroundModel(camImage, 5.0f / Properties.Settings.Default.FrameRate);
+                }
+            }
+            else if(_threePointPoints.XMove.x == -1)
+            {
+                //Work on x-displacement
+                var p = MoveAndDetect(_threePointFrame, camImage, new IppiPoint_32f(Properties.Settings.Default.MirrorXVAln, 0.0f));
+                if (p.x != -1)
+                {
+                    //found the point
+                    _threePointFrame = -1;//will be incremented to 0 below!
+                    _threePointPoints.XMove = new IppiPoint(p.x, p.y);
+                    poi = p;
+                    //reset foreground in preparation for y movement
+                    _fgModel.Dispose();
+                    _fgModel = new DynamicBackgroundModel(camImage, 5.0f / Properties.Settings.Default.FrameRate);
+                }
+            }
+            else if(_threePointPoints.YMove.x == -1)
+            {
+                //Work on y-displacement
+                var p = MoveAndDetect(_threePointFrame, camImage, new IppiPoint_32f(0.0f, Properties.Settings.Default.MirrorYVAln));
+                if (p.x != -1)
+                {
+                    //found the point
+                    _threePointFrame = -1;//will be incremented to 0 below!
+                    _threePointPoints.YMove = new IppiPoint(p.x, p.y);
+                    poi = p;
+                    //reset foreground in preparation of interpolation table building
+                    _fgModel.Dispose();
+                    _fgModel = new DynamicBackgroundModel(camImage, 20.0f / Properties.Settings.Default.FrameRate);
+                }
+            }
+            else
+            {
+                //Use results to calculate calibration
+                //Height
+                double camera_height_x = CalculateHeight(_threePointPoints.XMove, MirrorAngle(Properties.Settings.Default.MirrorXVAln));
+                System.Diagnostics.Debug.WriteLine("Height according to x-mirror is: {0}", camera_height_x);
+                double camera_height_y = CalculateHeight(_threePointPoints.YMove, MirrorAngle(Properties.Settings.Default.MirrorYVAln));
+                System.Diagnostics.Debug.WriteLine("Height according to y-mirror is: {0}", camera_height_y);
+                _camera_height = (camera_height_x + camera_height_y) / 2.0;
+                //Theta and reflection
+                double theta_x = CalculateCameraTheta(_threePointPoints.XMove, false);
+                System.Diagnostics.Debug.WriteLine("Theta according to x-mirror is: {0}", theta_x);
+                double theta_y = CalculateCameraTheta(_threePointPoints.YMove, false);
+                System.Diagnostics.Debug.WriteLine("Theta according to y-mirror is: {0}", theta_y);
+                _isYReflected = CheckReflection(theta_x, theta_y, out _camera_theta);
+                System.Diagnostics.Debug.WriteLine("Y reflection: {0}", _isYReflected);
+                _experimentPhase = ExperimentPhases.InterpTable;
+                _interpParams = new InterpolationParams();
+                //At this point include whole camera image in the interpolation ROI
+                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(0, 0, camImage.Width, camImage.Height));
+            }
+            _threePointFrame++;
+        }
 
+        /// <summary>
+        /// Runs the construction of the interpolation lookup table
+        /// </summary>
+        /// <param name="frameNumber">The current camera frame number</param>
+        /// <param name="camImage">The camera image</param>
+        /// <param name="poi">The detected beam centroid</param>
+        protected void InterpTableCalibration(int frameNumber, Image8 camImage, out IppiPoint? poi)
+        {
+            poi = null;
+            if (_interpParams.RequestDealt)
+            {
+                System.Diagnostics.Debug.Assert(!_interpParams.Walking);
+                //we have dealt the last request so lets get the next point or leave calibration
+                //if table is complete
+                if (!_interpParams.LookupTable.AddNext(new PointVoltagePair(_interpParams.CurrentPoint, _interpParams.CurrentVolts.x,
+                    _interpParams.CurrentVolts.y), out _interpParams.NextRequest))
+                {
+                    //lookup table complete. Precompute and save to file
+                    _interpParams.LookupTable.Precompute();
+                    _experimentPhase = ExperimentPhases.Done;
+                    var calibFile = File.CreateText("main.calib");
+                    _interpParams.LookupTable.SaveToFile(calibFile);
+                    calibFile.Close();
+                    System.Diagnostics.Debug.WriteLine("Calibration updated");
+                    return;
+                }
+                //we got a new point to deal with - prepare to immediately trigger the next condition and reset our foreground
+                _fgModel.Dispose();
+                _fgModel = new DynamicBackgroundModel(camImage, 5.0f / Properties.Settings.Default.FrameRate);
+                _interpParams.RequestDealt = false;
+                _interpParams.StepFrame = 0;
+            }
+            if (_interpParams.StepFrame == 0 && !_interpParams.RequestDealt)
+            {
+                //we have a request to deal with - try to target the requested coordinates and initiate walk
+                _interpParams.CurrentVolts = GetMirrorVolts(_interpParams.NextRequest);
+                _interpParams.CurrentVolts.x += _interpParams.XError * InterpolationParams.VoltsPerErrorPixel;
+                _interpParams.CurrentVolts.y += _interpParams.YError * InterpolationParams.VoltsPerErrorPixel;
+                _scanner.Hit(_interpParams.CurrentVolts);
+                _interpParams.Walking = true;
+                _interpParams.StepFrame++;
+            }
+            else if (_interpParams.StepFrame > Properties.Settings.Default.FrameRate/100 &&
+                _interpParams.StepFrame < Properties.Settings.Default.FrameRate/5 && _interpParams.Walking)
+            {
+                //give scanner 10ms to reach the target and then collect the foreground until 200ms
+                _fgModel.UpdateBackground(camImage);
+                _interpParams.StepFrame++;
+            }
+            else if (_interpParams.StepFrame > Properties.Settings.Default.FrameRate / 5 && _interpParams.Walking)
+            {
+                //Analyse coordinates. If they match the requested point, add the voltages
+                //to the lookup table. Otherwise compute the error and try again
+                IppiPoint actual = FindBeamLocation(_fgModel.Background, _bgModel.Background, _calc, _foreground);
+                poi = new IppiPoint(actual.x, actual.y);
+                //test for error
+                if ((actual.x - _interpParams.NextRequest.x) == 0 && (actual.y - _interpParams.NextRequest.y) == 0)
+                {
+                    //Looks good, add point and on next iteration we continue with next request
+                    _interpParams.RequestDealt = true;
+                    _interpParams.RetryCount = 0;
+                    _interpParams.CurrentPoint = _interpParams.NextRequest;
+                    _interpParams.StepFrame = 0;
+                }
+                else
+                {
+                    int error;
+                    //update x and y errors
+                    if (_interpParams.NextRequest.x > actual.x)
+                    {
+                        error = _interpParams.NextRequest.x - actual.x;
+                        if (error < 5)
+                            _interpParams.XError += error;
+                        else
+                            _interpParams.XError += 5;
+                    }
+                    else
+                    {
+                        error = _interpParams.NextRequest.x - actual.x;
+                        if (error > -5)
+                            _interpParams.XError += error;
+                        else
+                            _interpParams.XError -= 5;
+                    }
+                    if (_interpParams.NextRequest.y > actual.y)
+                    {
+                        error = _interpParams.NextRequest.y - actual.y;
+                        if (error < 5)
+                            _interpParams.YError += error;
+                        else
+                            _interpParams.YError += 5;
+                    }
+                    else
+                    {
+                        error = _interpParams.NextRequest.y - actual.y;
+                        if (error > -5)
+                            _interpParams.YError += error;
+                        else
+                            _interpParams.YError -= 5;
+                    }
+                    //too large errors may indicate that the point actually moved off the screen
+                    //in that case we try to recover by returning to the original position and going
+                    //from there
+                    if (Math.Abs(error) > 100)
+                    {
+                        _interpParams.XError = 0;
+                        _interpParams.YError = 0;
+                    }
+                    _interpParams.RetryCount++;
+                    if (_interpParams.RetryCount > 250)
+                    {
+                        //We can't reach the point. Add it to the table nonetheless and continue (may be occluded point)
+                        //At this point the errors are likely meaningless so reset them
+                        //also we add the point as if the trigonometry lookup table is correct
+                        _interpParams.CurrentVolts = GetMirrorVolts(_interpParams.NextRequest);
+                        _interpParams.XError = 0;
+                        _interpParams.YError = 0;
+                        _interpParams.CurrentPoint = _interpParams.NextRequest;
+                        if(!_interpParams.LookupTable.ForceAddNext(new PointVoltagePair(_interpParams.CurrentPoint, _interpParams.CurrentVolts.x,
+                            _interpParams.CurrentVolts.y), out _interpParams.NextRequest))
+                        {
+                            //lookup table complete - Precompute interpolations and save to file
+                            _interpParams.LookupTable.Precompute();
+                            var calibFile = File.CreateText("main.calib");
+                            _interpParams.LookupTable.SaveToFile(calibFile);
+                            calibFile.Close();
+                            System.Diagnostics.Debug.WriteLine("Calibration updated");
+                            return;
+                        }
+                        System.Diagnostics.Debug.WriteLine("Force add point to lookup table");
+                        _interpParams.RetryCount = 0;
+                    }
+                }
+                //Not walking and reset step frame to restart where we left off
+                _interpParams.Walking = false;
+                _interpParams.StepFrame = 0;
+            }//else if analyse walk
         }
 
         /// <summary>
@@ -458,23 +834,62 @@ namespace ZebraTrack.Experiments
 
         public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
-            // Build background over five seconds
-            if (frameNumber < Properties.Settings.Default.FrameRate * 5)
-                return BuildBackground(frameNumber, camImage, out poi);
-            throw new NotImplementedException();
+            switch (_experimentPhase)
+            {
+                case ExperimentPhases.BGround:
+                    BuildBackground(frameNumber, camImage, out poi);
+                    break;
+                case ExperimentPhases.ThreePoint:
+                    ThreePointCalibration(frameNumber, camImage, out poi);
+                    break;
+                case ExperimentPhases.InterpTable:
+                    InterpTableCalibration(frameNumber, camImage, out poi);
+                    break;
+                default:
+                    poi = null;
+                    return false;
+            }
+            return true;
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if (_foreground != null)
-                _foreground.Dispose();
+            if(_bgModel != null)
+            {
+                _bgModel.Dispose();
+                _bgModel = null;
+            }
+            if(_fgModel != null)
+            {
+                _fgModel.Dispose();
+                _fgModel = null;
+            }
             if (_calc != null)
+            {
                 _calc.Dispose();
+                _calc = null;
+            }
+            if(_foreground != null)
+            {
+                _foreground.Dispose();
+                _foreground = null;
+            }
             if (_markerBuffer != null)
             {
                 Marshal.FreeHGlobal((IntPtr)_markerBuffer);
                 _markerBuffer = null;
+            }
+            if(_laser != null)
+            {
+                _laser.Dispose();
+                _laser = null;
+            }
+            if(_scanner != null)
+            {
+                _scanner.Hit(new IppiPoint_32f(0.0f, 0.0f));
+                _scanner.Dispose();
+                _scanner = null;
             }
         }
 

@@ -23,5 +23,20 @@
     <Setting Name="MirrorDOptPerV" Type="System.Single" Scope="Application">
       <Value Profile="(Default)">3</Value>
     </Setting>
+    <Setting Name="LaserCalibPowermW" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">300</Value>
+    </Setting>
+    <Setting Name="DAQ" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dev1</Value>
+    </Setting>
+    <Setting Name="LaserAO" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ao2</Value>
+    </Setting>
+    <Setting Name="ScannerX" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ao0</Value>
+    </Setting>
+    <Setting Name="ScannerY" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ao1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

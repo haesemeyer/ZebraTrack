@@ -85,5 +85,65 @@ namespace ZebraTrack.Properties {
                 return ((float)(this["MirrorDOptPerV"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public double LaserCalibPowermW {
+            get {
+                return ((double)(this["LaserCalibPowermW"]));
+            }
+            set {
+                this["LaserCalibPowermW"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("dev1")]
+        public string DAQ {
+            get {
+                return ((string)(this["DAQ"]));
+            }
+            set {
+                this["DAQ"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ao2")]
+        public string LaserAO {
+            get {
+                return ((string)(this["LaserAO"]));
+            }
+            set {
+                this["LaserAO"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ao0")]
+        public string ScannerX {
+            get {
+                return ((string)(this["ScannerX"]));
+            }
+            set {
+                this["ScannerX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ao1")]
+        public string ScannerY {
+            get {
+                return ((string)(this["ScannerY"]));
+            }
+            set {
+                this["ScannerY"] = value;
+            }
+        }
     }
 }
