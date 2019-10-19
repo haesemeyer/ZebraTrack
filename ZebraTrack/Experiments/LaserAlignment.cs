@@ -638,6 +638,16 @@ namespace ZebraTrack.Experiments
             }//else if analyse walk
         }
 
+        protected override void WriteExperimentInfo(StreamWriter infoWriter)
+        {
+            base.WriteExperimentInfo(infoWriter);
+            if (infoWriter != null)
+            {
+                infoWriter.WriteLine("Laser Alignment performed");
+                infoWriter.WriteLine();
+            }
+        }
+
         /// <summary>
         /// Finds the location of the laser beam in the camera image
         /// </summary>
