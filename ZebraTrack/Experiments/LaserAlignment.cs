@@ -191,6 +191,11 @@ namespace ZebraTrack.Experiments
         Image8 _foreground;
 
         /// <summary>
+        /// Morphology object for noise reductions
+        /// </summary>
+        Morphology _strel3x3;
+
+        /// <summary>
         /// Buffer for marker extraction
         /// </summary>
         byte* _markerBuffer;
@@ -369,6 +374,7 @@ namespace ZebraTrack.Experiments
                 //Create image intermediates
                 _calc = new Image8(camImage.Size);
                 _foreground = new Image8(camImage.Size);
+                _strel3x3 = Morphology.Generate3x3Mask(camImage.Size);
                 //Initialize buffer for label markers
                 int bufferSize = 0;
                 cv.ippiLabelMarkersGetBufferSize_8u_C1R(camImage.Size, &bufferSize);
@@ -669,9 +675,9 @@ namespace ZebraTrack.Experiments
             //threshold difference
             ip.ippiThreshold_LTVal_8u_C1IR(foreground.Image, foreground.Stride, imageSize, 111, 0);
             ip.ippiThreshold_GTVal_8u_C1IR(foreground.Image, foreground.Stride, imageSize, 110, 255);
-            //perform closing operation
-            ip.ippiDilate3x3_8u_C1IR(foreground.Image, foreground.Stride, imageSize);
-            ip.ippiErode3x3_8u_C1IR(foreground.Image, foreground.Stride, imageSize);
+            //perform closing operation - 2 step to put result back into foreground
+            _strel3x3.Dilate(foreground, calc, imageSize);
+            _strel3x3.Erode(calc, foreground, imageSize);
             //feature extraction
             int nMarkers = 0;
             cv.ippiLabelMarkers_8u_C1IR(foreground.Image, foreground.Stride, imageSize, 1, 254, IppiNorm.ippiNormInf, &nMarkers, _markerBuffer);
@@ -900,6 +906,11 @@ namespace ZebraTrack.Experiments
                 _scanner.Hit(new IppiPoint_32f(0.0f, 0.0f));
                 _scanner.Dispose();
                 _scanner = null;
+            }
+            if(_strel3x3 != null)
+            {
+                _strel3x3.Dispose();
+                _strel3x3 = null;
             }
         }
 
