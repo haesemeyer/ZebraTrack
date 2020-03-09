@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="MHApi.DrewsClasses.EZImage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Utilities="clr-namespace:MHApi.DrewsClasses" mc:Ignorable="d" 
+             x:Name="userControl"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Image x:Name="image" Source="{Binding Source.ImageSource, ElementName=userControl}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ItemsControl x:Name="overlay" Height="{Binding ActualHeight, ElementName=image}" Width="{Binding ActualWidth, ElementName=image}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Utilities:Axes IsItemsHost="True" XMin="{Binding XMin, ElementName=userControl}" XMax="{Binding XMax, ElementName=userControl}" YMin="{Binding YMin, ElementName=userControl}" YMax="{Binding YMax, ElementName=userControl}" AxesMouseLeftButtonDown="Axes_AxesMouseLeftButtonDown" AxesMouseLeftButtonUp="Axes_AxesMouseLeftButtonUp" AxesMouseMove="Axes_AxesMouseMove" AxesMouseLeftButtonDoubleClick="Axes_AxesMouseLeftButtonDoubleClick"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,5 @@
+Dependencies of MHAPI
+
+Intel ipp version 7.0
+SharpGL 2.0
+NI DaqMX 9.x
