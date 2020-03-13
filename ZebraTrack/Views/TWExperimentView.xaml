@@ -19,6 +19,7 @@
         <Label x:Name="label" Content="Experiment length [s]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,73,0,0"/>
         <TextBox x:Name="tbExpName" Height="23" Margin="127.694,75.96,10,0" TextWrapping="Wrap" Text="{Binding ExperimentLength}" VerticalAlignment="Top"/>
         <TextBlock x:Name="textBlock" Margin="10,10,29.306,0" TextWrapping="Wrap" Text="Very simple experiment which tracks the fishes heading and position and writes those to file." VerticalAlignment="Top" Height="58" Foreground="Gray"/>
+        <CheckBox x:Name="checkBox" Content="Write fish images to file?" HorizontalAlignment="Left" Margin="10,111.77,0,0" VerticalAlignment="Top" Foreground="Gray" IsChecked="{Binding WriteFishImages}"/>
 
     </Grid>
 </mhApi:WindowAwareView>

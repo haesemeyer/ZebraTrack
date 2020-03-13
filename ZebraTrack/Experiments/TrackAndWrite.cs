@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using ipp;
 using MHApi.DrewsClasses;
+using ZebraTrack.ViewModels;
 
 namespace ZebraTrack.Experiments
 {
@@ -22,7 +23,7 @@ namespace ZebraTrack.Experiments
     /// Very simple experiment class that for a given time
     /// writes fish position and heading to file
     /// </summary>
-    class TrackAndWrite : TrackingExperiment
+    unsafe class TrackAndWrite : TrackingExperiment
     {
         /// <summary>
         /// The last frame that was processed
@@ -35,15 +36,48 @@ namespace ZebraTrack.Experiments
         int _totalFrames;
 
         /// <summary>
+        /// If set to true, in addition to coordinates
+        /// we will save a fish region image and corresponding
+        /// background image
+        /// </summary>
+        bool _writeFishImages;
+
+        /// <summary>
         /// The file writer to save experiment information
         /// </summary>
         StreamWriter _trackWriter;
+
+        /// <summary>
+        /// Writes fish region camera image
+        /// </summary>
+        TiffWriter _imageWriter;
+
+        /// <summary>
+        /// Writes fish region background model
+        /// </summary>
+        TiffWriter _backgroundWriter;
+
+        /// <summary>
+        /// Image for region around fish
+        /// </summary>
+        Image8 _camRegion;
         
-        public TrackAndWrite(int expSeconds, int frameRate, int pxPERmm, string folder, string name, string fishID) : base(folder, name, fishID, expSeconds, frameRate, pxPERmm)
+        public TrackAndWrite(int expSeconds, int frameRate, int pxPERmm, string folder, string name, string fishID, bool writeImage) : base(folder, name, fishID, expSeconds, frameRate, pxPERmm)
         {
             _totalFrames = ExperimentLength * FrameRate;
-            if(FileSaver != null)
+            _writeFishImages = writeImage;
+            if (FileSaver != null)
+            {
                 _trackWriter = FileSaver.GetStreamWriter(".track");
+                if (_writeFishImages)
+                {
+                    _imageWriter = FileSaver.GetTiffWriter("_camImage.tif", true);
+                    _backgroundWriter = FileSaver.GetTiffWriter("_bgImage.tif", true);
+                    //Create 10x10 mm region image
+                    _camRegion = new Image8(Properties.Settings.Default.PixelsPermm * 10,
+                        Properties.Settings.Default.PixelsPermm * 10);
+                }
+            }
             //This is an open-loop experiment rather not important to stay fully up-to-date
             SuggestedBufferSeconds = 2;
         }
@@ -71,10 +105,9 @@ namespace ZebraTrack.Experiments
         /// Process the next frame
         /// </summary>
         /// <param name="frameNumber">The frame index</param>
-        /// <param name="fishCentroid">The tracked fishes centroid position</param>
-        /// <param name="heading">The heading of the fish</param>
-        /// <param name="fishImage">Subregion image of the fish</param>
-        /// <returns></returns>
+        /// <param name="camImage">The camera image</param>
+        /// <param name="poi">The fish location</param>
+        /// <returns>Whether experiment should continue or not</returns>
         public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
             base.ProcessNext(frameNumber, camImage, out poi);
@@ -87,9 +120,29 @@ namespace ZebraTrack.Experiments
             if (_trackWriter != null)
             {
                 if (fish != null)
+                {
                     _trackWriter.WriteLine("{0}\t{1}\t{2}\t{3}", frameNumber, fish.Centroid.x, fish.Centroid.y, fish.Angle);
+                    if (_writeFishImages)
+                    {
+                        //blank and copy
+                        ip.ippiSet_8u_C1R(0, _camRegion.Image, _camRegion.Stride, _camRegion.Size);
+                        MainViewModel.CopyRegionImage(fish.Centroid, _camRegion, camImage);
+                        _imageWriter.WriteFrame(_camRegion);
+                        MainViewModel.CopyRegionImage(fish.Centroid, _camRegion, Tracker.Background);
+                        _backgroundWriter.WriteFrame(_camRegion);
+                    }
+                }
                 else
+                {
                     _trackWriter.WriteLine("NaN\tNaN\tNaN\tNaN");
+                    if (_writeFishImages)
+                    {
+                        //blank
+                        ip.ippiSet_8u_C1R(0, _camRegion.Image, _camRegion.Stride, _camRegion.Size);
+                        _imageWriter.WriteFrame(_camRegion);
+                        _backgroundWriter.WriteFrame(_camRegion);
+                    }
+                }
             }
             return true;
         }
@@ -104,6 +157,21 @@ namespace ZebraTrack.Experiments
                     _trackWriter.Dispose();
                     _trackWriter = null;
 
+                }
+                if(_imageWriter != null)
+                {
+                    _imageWriter.Dispose();
+                    _imageWriter = null;
+                }
+                if(_backgroundWriter != null)
+                {
+                    _backgroundWriter.Dispose();
+                    _backgroundWriter = null;
+                }
+                if(_camRegion != null)
+                {
+                    _camRegion.Dispose();
+                    _camRegion = null;
                 }
             }
         }

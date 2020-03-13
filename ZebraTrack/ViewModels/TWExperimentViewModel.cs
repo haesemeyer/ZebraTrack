@@ -28,6 +28,12 @@ namespace ZebraTrack.ViewModels
         /// </summary>
         int _experimentLength;
 
+        /// <summary>
+        /// If set to true, in addition to coordinates
+        /// small region around fish will be saved as image stack
+        /// </summary>
+        bool _writeFishImages;
+
         public TWExperimentViewModel()
         {
             ExperimentLength = 30 * 60;
@@ -51,10 +57,27 @@ namespace ZebraTrack.ViewModels
             }
         }
 
+        /// <summary>
+        /// If set to true, in addition to coordinates
+        /// small region around fish will be saved as image stack
+        /// </summary>
+        public bool WriteFishImages
+        {
+            get
+            {
+                return _writeFishImages;
+            }
+            set
+            {
+                _writeFishImages = value;
+                RaisePropertyChanged(nameof(WriteFishImages));
+            }
+        }
+
         public ExperimentBase CreateExperiment(string name, string fishID)
         {
             string folder = Path.Combine(Properties.Settings.Default.SavePath,"TrackAndWrite");
-            return new TrackAndWrite(_experimentLength, Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm, folder, name, fishID);
+            return new TrackAndWrite(_experimentLength, Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm, folder, name, fishID, _writeFishImages);
         }
     }
 }

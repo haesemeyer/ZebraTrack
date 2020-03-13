@@ -338,7 +338,7 @@ namespace ZebraTrack.ViewModels
         /// <param name="centroid">The centroid around which image region should be copied</param>
         /// <param name="regionImage">The target of the copy</param>
         /// <param name="image">The source of the copy operation</param>
-        void CopyRegionImage(IppiPoint centroid, Image8 regionImage, Image8 image)
+        public static void CopyRegionImage(IppiPoint centroid, Image8 regionImage, Image8 image)
         {
             IppiPoint copyStart = new IppiPoint(centroid.x - regionImage.Width / 2, centroid.y - regionImage.Height / 2);
             int destX = 0;

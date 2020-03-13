@@ -9,7 +9,7 @@
       <Value Profile="(Default)">700</Value>
     </Setting>
     <Setting Name="SavePath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">E:\\Behavior\\</Value>
+      <Value Profile="(Default)">D:\\Behavior\\</Value>
     </Setting>
     <Setting Name="PixelsPermm" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">9</Value>
