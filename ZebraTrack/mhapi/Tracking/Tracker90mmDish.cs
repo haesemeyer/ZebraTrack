@@ -591,7 +591,7 @@ namespace MHApi.Tracking
                     double m12 = 0;
                     ip.ippiGetSpatialMoment_64f(_momentState, 0, 0, 0, region.TopLeft, &m00);
                     //since our input image is not 0s and 1s but 0s and 255s we have to divide by 255 in order to re-normalize our moments
-                    System.Diagnostics.Debug.Assert(m00 % 255 == 0, "M00 was not a multiple of 255");
+                    //System.Diagnostics.Debug.Assert(m00 % 255 == 0, "M00 was not a multiple of 255");
                     m00 /= 255;
                     //only retrieve other moments if this is a "fish candidate"
                     if (m00 >= MinArea)
