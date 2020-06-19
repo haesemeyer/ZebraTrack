@@ -100,6 +100,8 @@ namespace MHApi.CameraLink
 		/// </summary>
 		Image16 _imgDownsize;
 
+		uint _framesDropped;
+
 		#endregion
 
 		#region Constructor
@@ -270,6 +272,7 @@ namespace MHApi.CameraLink
 			}
 			if (!_configured)
 				Configure((uint)bufferCount);
+			_framesDropped = 0;
 			//Start asynchronous acquisition - after this call the ring-buffer
 			//will get filled with images!
             NIImaq.CheckError(NIImaq.imgSessionAcquire(_sid, true, null));
@@ -302,6 +305,7 @@ namespace MHApi.CameraLink
 				NIImaq.imgDisposeBufList(_bufId, false);
 			_captureRunning = false;
 			_configured = false;
+			System.Diagnostics.Debug.WriteLine("Dropped {0} frames this run.", _framesDropped);
 		}
 
 		/// <summary>
@@ -333,7 +337,8 @@ namespace MHApi.CameraLink
                 NIImaq.CheckError(NIImaq.imgSessionCopyBufferByNumber(_sid, requestedFrame, (IntPtr)imageOut.Image, IMG_OVERWRITE_MODE.IMG_OVERWRITE_GET_NEWEST, out frameActual, out indexActual));
 				if (frameActual != requestedFrame)
 				{
-					System.Diagnostics.Debug.WriteLine("Requested frame {0}; obtained frame {1}", requestedFrame, frameActual);
+					//System.Diagnostics.Debug.WriteLine("Requested frame {0}; obtained frame {1}", requestedFrame, frameActual);
+					_framesDropped += (frameActual - requestedFrame);
 				}
 			}
 			_acquiredFrames++;
