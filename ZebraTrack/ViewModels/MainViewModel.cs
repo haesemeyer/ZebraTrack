@@ -379,7 +379,7 @@ namespace ZebraTrack.ViewModels
                     if(experiment != null && experiment.SuggestedBufferSeconds != null)
                     {
                         int buffsize = (int)(experiment.SuggestedBufferSeconds.Value * FrameRate);
-                        camera.Start(buffsize > 1 ? buffsize : 1);
+                        camera.Start(buffsize > 2 ? buffsize : 2);
                     }
                     else
                         camera.Start(100);//start camera with 100 frames in buffer by default
