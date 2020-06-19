@@ -142,7 +142,7 @@ namespace MHApi.DrewsClasses {
                 firstBmp.Save(CurrentFileNameWithExtension, tiffCodecInfo, EncoderParams);
                 firstFrame = false;
             } else {
-                if (new FileInfo(CurrentFileNameWithExtension).Length > 2040109466) { // If we're above 1.9 GB, start a new file to avoid 2GB limitation in some tiff readers
+                if (new FileInfo(CurrentFileNameWithExtension).Length > 512000000) { // If we're above 1.9 GB, start a new file to avoid 2GB limitation in some tiff readers
                     fileIndex++;
                     firstFrame = true;
                     WriteFrame(image);
