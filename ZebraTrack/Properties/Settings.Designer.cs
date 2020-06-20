@@ -34,7 +34,7 @@ namespace ZebraTrack.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("700")]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
         public int FrameRate {
             get {
                 return ((int)(this["FrameRate"]));
@@ -52,7 +52,7 @@ namespace ZebraTrack.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        [global::System.Configuration.DefaultSettingValueAttribute("24")]
         public int PixelsPermm {
             get {
                 return ((int)(this["PixelsPermm"]));
