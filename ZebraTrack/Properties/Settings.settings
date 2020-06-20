@@ -6,13 +6,13 @@
       <Value Profile="(Default)">img0</Value>
     </Setting>
     <Setting Name="FrameRate" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">250</Value>
+      <Value Profile="(Default)">700</Value>
     </Setting>
     <Setting Name="SavePath" Type="System.String" Scope="Application">
       <Value Profile="(Default)">D:\\Behavior\\</Value>
     </Setting>
     <Setting Name="PixelsPermm" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">24</Value>
+      <Value Profile="(Default)">9</Value>
     </Setting>
     <Setting Name="MirrorXVAln" Type="System.Single" Scope="Application">
       <Value Profile="(Default)">1</Value>

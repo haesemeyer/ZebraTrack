@@ -79,7 +79,7 @@ namespace ZebraTrack.Experiments
                 }
             }
             //This is an open-loop experiment rather not important to stay fully up-to-date
-            SuggestedBufferSeconds = 0.1f;
+            SuggestedBufferSeconds = 2;
         }
 
         public override string StatusMessage
