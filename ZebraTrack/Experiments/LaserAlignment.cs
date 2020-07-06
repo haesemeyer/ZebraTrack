@@ -493,7 +493,7 @@ namespace ZebraTrack.Experiments
                 //Theta and reflection
                 double theta_x = CalculateCameraTheta(_threePointPoints.XMove, false);
                 System.Diagnostics.Debug.WriteLine("Theta according to x-mirror is: {0}", theta_x);
-                double theta_y = CalculateCameraTheta(_threePointPoints.YMove, false);
+                double theta_y = CalculateCameraTheta(_threePointPoints.YMove, true);
                 System.Diagnostics.Debug.WriteLine("Theta according to y-mirror is: {0}", theta_y);
                 _isYReflected = CheckReflection(theta_x, theta_y, out _camera_theta);
                 System.Diagnostics.Debug.WriteLine("Y reflection: {0}", _isYReflected);
@@ -700,8 +700,8 @@ namespace ZebraTrack.Experiments
                         maxIndex = i;
                     }
                 }
-                //System.Diagnostics.Debug.WriteLine("Area: {0}", blobsDetected[maxIndex].Area);
-                //System.Diagnostics.Debug.WriteLine("Eccentricity: {0}", blobsDetected[maxIndex].Eccentricity);
+                // System.Diagnostics.Debug.WriteLine("Area: {0}", blobsDetected[maxIndex].Area);
+                // System.Diagnostics.Debug.WriteLine("Eccentricity: {0}", blobsDetected[maxIndex].Eccentricity);
                 if (maxArea > 100)
                     return blobsDetected[maxIndex].Centroid;
                 else
@@ -775,7 +775,7 @@ namespace ZebraTrack.Experiments
             double radius = Math.Sqrt(dx * dx + dy * dy);
             if (radius == 0)
                 throw new ArgumentException("Alignment radius is 0. Increase alignment mirror excursion voltages.");
-            double offset = is_y_displacement ? Math.PI / 4 : 0;
+            double offset = is_y_displacement ? Math.PI / 2 : 0;
             double theta = Math.Acos(dx / radius);
             if (dy >= 0)
                 return theta - offset;
