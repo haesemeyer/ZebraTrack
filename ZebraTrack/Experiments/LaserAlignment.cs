@@ -500,7 +500,7 @@ namespace ZebraTrack.Experiments
                 _experimentPhase = ExperimentPhases.InterpTable;
                 _interpParams = new InterpolationParams();
                 //At this point include whole camera image in the interpolation ROI
-                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(0, 0, camImage.Width, camImage.Height));
+                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(0, 0, camImage.Width, camImage.Height), 4);
             }
             _threePointFrame++;
         }
