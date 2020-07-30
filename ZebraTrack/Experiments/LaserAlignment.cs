@@ -497,10 +497,11 @@ namespace ZebraTrack.Experiments
                 System.Diagnostics.Debug.WriteLine("Theta according to y-mirror is: {0}", theta_y);
                 _isYReflected = CheckReflection(theta_x, theta_y, out _camera_theta);
                 System.Diagnostics.Debug.WriteLine("Y reflection: {0}", _isYReflected);
+                System.Diagnostics.Debug.WriteLine("Final camera theta is: {0}", _camera_theta);
                 _experimentPhase = ExperimentPhases.InterpTable;
                 _interpParams = new InterpolationParams();
-                //At this point include whole camera image in the interpolation ROI
-                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(0, 0, camImage.Width, camImage.Height), 4);
+                //At this point have 10 pixel borders around camera image in the interpolation ROI
+                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(10, 10, camImage.Width-20, camImage.Height-20), 4);
             }
             _threePointFrame++;
         }
@@ -571,47 +572,48 @@ namespace ZebraTrack.Experiments
                 }
                 else
                 {
-                    int error;
+                    int errorx, errory;
                     //update x and y errors
                     if (_interpParams.NextRequest.x > actual.x)
                     {
-                        error = _interpParams.NextRequest.x - actual.x;
-                        if (error < 5)
-                            _interpParams.XError += error;
+                        errorx = _interpParams.NextRequest.x - actual.x;
+                        if (errorx < 5)
+                            _interpParams.XError += errorx;
                         else
                             _interpParams.XError += 5;
                     }
                     else
                     {
-                        error = _interpParams.NextRequest.x - actual.x;
-                        if (error > -5)
-                            _interpParams.XError += error;
+                        errorx = _interpParams.NextRequest.x - actual.x;
+                        if (errorx > -5)
+                            _interpParams.XError += errorx;
                         else
                             _interpParams.XError -= 5;
                     }
                     if (_interpParams.NextRequest.y > actual.y)
                     {
-                        error = _interpParams.NextRequest.y - actual.y;
-                        if (error < 5)
-                            _interpParams.YError += error;
+                        errory = _interpParams.NextRequest.y - actual.y;
+                        if (errory < 5)
+                            _interpParams.YError += errory;
                         else
                             _interpParams.YError += 5;
                     }
                     else
                     {
-                        error = _interpParams.NextRequest.y - actual.y;
-                        if (error > -5)
-                            _interpParams.YError += error;
+                        errory = _interpParams.NextRequest.y - actual.y;
+                        if (errory > -5)
+                            _interpParams.YError += errory;
                         else
                             _interpParams.YError -= 5;
                     }
                     //too large errors may indicate that the point actually moved off the screen
                     //in that case we try to recover by returning to the original position and going
                     //from there
-                    if (Math.Abs(error) > 100)
+                    if (Math.Abs(errorx) > 100 || Math.Abs(errory) > 100)
                     {
                         _interpParams.XError = 0;
                         _interpParams.YError = 0;
+                        System.Diagnostics.Debug.WriteLine("Error > 100. Trying to recover.");
                     }
                     _interpParams.RetryCount++;
                     if (_interpParams.RetryCount > 250)
@@ -638,10 +640,14 @@ namespace ZebraTrack.Experiments
                         _interpParams.RetryCount = 0;
                     }
                 }
-                //Not walking and reset step frame to restart where we left off
+                //Not walking and reset step frame to restart where we left off and create new foreground
                 _interpParams.Walking = false;
                 _interpParams.StepFrame = 0;
+                _fgModel.Dispose();
+                _fgModel = new DynamicBackgroundModel(camImage, 5.0f / Properties.Settings.Default.FrameRate);
             }//else if analyse walk
+            else
+                _interpParams.StepFrame++;//Waiting for mirror to reach final position
         }
 
         protected override void WriteExperimentInfo(StreamWriter infoWriter)
@@ -716,8 +722,10 @@ namespace ZebraTrack.Experiments
         /// </summary>
         /// <param name="coordinates"></param>
         /// <returns></returns>
-        private IppiPoint_32f GetMirrorVolts(IppiPoint coordinates)
+        private IppiPoint_32f GetMirrorVolts(IppiPoint coordinates_desired)
         {
+            //Subract origin coordinates from the desired coordinates
+            IppiPoint coordinates = new IppiPoint(coordinates_desired.x - _p0.x, coordinates_desired.y - _p0.y);
             var desired_rotation = _camera_theta * -1;//back rotation
             var dx_mirror = coordinates.x * Math.Cos(desired_rotation) - coordinates.y * Math.Sin(desired_rotation);
             var dy_mirror = coordinates.x * Math.Sin(desired_rotation) + coordinates.y * Math.Cos(desired_rotation);
@@ -725,7 +733,7 @@ namespace ZebraTrack.Experiments
             var vy = Math.Atan(dy_mirror / _camera_height);
             if (_isYReflected)
                 vy *= -1;
-            return new IppiPoint_32f((float)vx, (float)vy);
+            return new IppiPoint_32f((float)MirrorVoltage(vx), (float)MirrorVoltage(vy));
         }
 
         /// <summary>
