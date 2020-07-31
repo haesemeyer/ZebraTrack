@@ -26,7 +26,7 @@ namespace ZebraTrack.ViewModels
         public ExperimentBase CreateExperiment(string name, string fishID)
         {
             string folder = Path.Combine(Properties.Settings.Default.SavePath, "LaserAlignment");
-            //TODO: Allow specifying alignment grid spacing [currently 8 pixels], ROI [currently camera FOV]
+            //TODO: Allow specifying alignment grid spacing [currently 4 pixels], ROI [currently camera FOV -10 px border]
             //and accuracy requirement [currently 0 pixels]
             return new LaserAlignment(Properties.Settings.Default.FrameRate);
         }
