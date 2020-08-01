@@ -85,6 +85,7 @@
     <Compile Include="Experiments\IExperiment.cs" />
     <Compile Include="Experiments\LaserAlignment.cs" />
     <Compile Include="Experiments\PreviewTrack.cs" />
+    <Compile Include="Experiments\TargetingTest.cs" />
     <Compile Include="Experiments\TrackAndWrite.cs" />
     <Compile Include="Experiments\TrackingExperiment.cs" />
     <Compile Include="ipp_interface\ippcc.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="mhapi\Utilities\StringConvertibleList.cs" />
     <Compile Include="mhapi\Utilities\WeakReference.cs" />
     <Compile Include="ViewModels\IExperimentVM.cs" />
+    <Compile Include="ViewModels\TargetingTestViewModel.cs" />
     <Compile Include="ViewModels\LaserAlignmentViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\TWExperimentViewModel.cs" />
@@ -207,6 +209,9 @@
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TargetingTestView.xaml.cs">
+      <DependentUpon>TargetingTestView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TWExperimentView.xaml.cs">
       <DependentUpon>TWExperimentView.xaml</DependentUpon>
@@ -234,6 +239,10 @@
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TargetingTestView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TWExperimentView.xaml">
       <SubType>Designer</SubType>
