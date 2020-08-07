@@ -708,7 +708,7 @@ namespace ZebraTrack.Experiments
                 }
                 // System.Diagnostics.Debug.WriteLine("Area: {0}", blobsDetected[maxIndex].Area);
                 // System.Diagnostics.Debug.WriteLine("Eccentricity: {0}", blobsDetected[maxIndex].Eccentricity);
-                if (maxArea > 100)
+                if (maxArea > 30)
                     return blobsDetected[maxIndex].Centroid;
                 else
                     return new IppiPoint(-1, -1);
