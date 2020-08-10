@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2016 Martin Haesemeyer
+Copyright 2020 Martin Haesemeyer
    Licensed under the MIT License, see License.txt.
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
