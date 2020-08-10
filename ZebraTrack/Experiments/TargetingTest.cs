@@ -22,8 +22,9 @@ namespace ZebraTrack.Experiments
 {
 
     /// <summary>
-    /// Very simple experiment class that for a given time
-    /// writes fish position and heading to file
+    /// Experiment to test targeting accuracy by interleaving laser on frames
+    /// which are excluded from tracking with laser off frames. For laser to
+    /// be visible, blocking filter needs to be removed from camera.
     /// </summary>
     unsafe class TargetingTest : TrackingExperiment
     {
@@ -106,6 +107,11 @@ namespace ZebraTrack.Experiments
         /// <returns>Whether experiment should continue or not</returns>
         public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
+            if (_scanner == null)
+            {
+                System.Diagnostics.Debug.WriteLine("Scanner was not initialized. Terminating experiment");
+                return false;
+            }
             int writeEvery = Properties.Settings.Default.FrameRate * 4;
             if (frameNumber % writeEvery == writeEvery - 1)
                 _laser.LaserPower = Properties.Settings.Default.LaserCalibPowermW;
