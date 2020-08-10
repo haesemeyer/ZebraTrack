@@ -135,8 +135,8 @@ namespace ZebraTrack.Experiments
                 {
                     _trackWriter.WriteLine("NaN\tNaN\tNaN\tNaN");
                 }
-                // Write image of Laser On frames and the two surrounding frames to file
-                if (frameNumber % writeEvery <=1 || frameNumber % writeEvery == writeEvery-1)
+                // Write image of Laser On frames and the two surrounding frames on each side to file
+                if (frameNumber % writeEvery <=2 || frameNumber % writeEvery >= writeEvery-2)
                 {
                     _imageWriter.WriteFrame(camImage);
                 }
