@@ -107,6 +107,7 @@ namespace ZebraTrack.Experiments
         /// <returns>Whether experiment should continue or not</returns>
         public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
+            base.ProcessNext(frameNumber, camImage, out poi);
             if (_scanner == null)
             {
                 System.Diagnostics.Debug.WriteLine("Scanner was not initialized. Terminating experiment");
@@ -117,7 +118,6 @@ namespace ZebraTrack.Experiments
                 _laser.LaserPower = Properties.Settings.Default.LaserCalibPowermW;
             else
                 _laser.LaserPower = 0;
-            base.ProcessNext(frameNumber, camImage, out poi);
             _lastFrame = frameNumber;
             if (frameNumber >= _totalFrames)
                 return false;
