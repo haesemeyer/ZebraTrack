@@ -56,7 +56,7 @@
       <HintPath>..\packages\MathNet.Numerics.4.9.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="NationalInstruments.Common, Version=19.0.40.49152, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL" />
-    <Reference Include="NationalInstruments.DAQmx, Version=19.6.45.1, Culture=neutral, PublicKeyToken=4febd62461bf11a4, processorArchitecture=x86" />
+    <Reference Include="NationalInstruments.DAQmx, Version=20.1.45.49152, Culture=neutral, PublicKeyToken=4febd62461bf11a4, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -85,6 +85,7 @@
     <Compile Include="Experiments\IExperiment.cs" />
     <Compile Include="Experiments\LaserAlignment.cs" />
     <Compile Include="Experiments\PreviewTrack.cs" />
+    <Compile Include="Experiments\OpenLoopLaserRamp.cs" />
     <Compile Include="Experiments\TargetingTest.cs" />
     <Compile Include="Experiments\TrackAndWrite.cs" />
     <Compile Include="Experiments\TrackingExperiment.cs" />
@@ -203,12 +204,16 @@
     <Compile Include="ViewModels\TargetingTestViewModel.cs" />
     <Compile Include="ViewModels\LaserAlignmentViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\OLLRampViewModel.cs" />
     <Compile Include="ViewModels\TWExperimentViewModel.cs" />
     <Compile Include="Views\LaserAlignmentView.xaml.cs">
       <DependentUpon>LaserAlignmentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OLLRampView.xaml.cs">
+      <DependentUpon>OLLRampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TargetingTestView.xaml.cs">
       <DependentUpon>TargetingTestView.xaml</DependentUpon>
@@ -239,6 +244,10 @@
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OLLRampView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TargetingTestView.xaml">
       <Generator>MSBuild:Compile</Generator>
