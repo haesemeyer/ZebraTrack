@@ -175,7 +175,7 @@ namespace ZebraTrack.ViewModels
 
         public ExperimentBase CreateExperiment(string name, string fishID)
         {
-            string folder = Path.Combine(Properties.Settings.Default.SavePath,"TrackAndWrite");
+            string folder = Path.Combine(Properties.Settings.Default.SavePath,"PowerRamp");
             OpenLoopLaserRamp ollramp = new OpenLoopLaserRamp(HabituationLength, RampLength, RestLength, NTrials, Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm, folder, name, fishID);
             ollramp.BaseLaserPower = BaseLaserPower;
             ollramp.PeakLaserPower = PeakLaserPower;
