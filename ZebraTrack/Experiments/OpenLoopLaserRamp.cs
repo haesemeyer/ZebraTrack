@@ -357,8 +357,19 @@ namespace ZebraTrack.Experiments
             if (fish != null)
             {
                 poi = new IppiPoint(fish.Centroid.x, fish.Centroid.y);
-                if (_scanner != null)
-                    _scanner.Hit(poi.GetValueOrDefault());
+                try
+                {
+                    if (_scanner != null)
+                        _scanner.Hit(poi.GetValueOrDefault());
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    System.Diagnostics.Debug.WriteLine("Tried to hit coordinates outside scan table area.");
+                    System.Diagnostics.Debug.WriteLine("Coordinates were: x={0}, y={1}", fish.xc, fish.yc);
+                    System.Diagnostics.Debug.WriteLine("Terminating Experiment");
+                    _laser.LaserPower = 0;
+                    return false;
+                }
             }
             //Write track information including current phase, current laser power
             WriteTrackInfo(frameNumber, fish);
