@@ -290,7 +290,7 @@ namespace ZebraTrack.ViewModels
             ExperimentName = "Experiment01";
             FishName = "TLAB";
             Comment = "";
-            MaskRadius = 300;
+            MaskRadius = 360;
             DOB = DateTime.Now - new TimeSpan(5, 0, 0, 0);
             DisplayImage = ImageType.Camera;
             if (IsInDesignMode)
