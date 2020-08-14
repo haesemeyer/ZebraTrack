@@ -364,9 +364,11 @@ namespace ZebraTrack.Experiments
             WriteTrackInfo(frameNumber, fish);
             //Write images
             ip.ippiSet_8u_C1R(0, _camRegion.Image, _camRegion.Stride, _camRegion.Size);
-            MainViewModel.CopyRegionImage(fish.Centroid, _camRegion, camImage);
+            if(fish != null)
+                MainViewModel.CopyRegionImage(fish.Centroid, _camRegion, camImage);
             _imageWriter.WriteFrame(_camRegion);
-            MainViewModel.CopyRegionImage(fish.Centroid, _camRegion, Tracker.Background);
+            if (fish != null)
+                MainViewModel.CopyRegionImage(fish.Centroid, _camRegion, Tracker.Background);
             _backgroundWriter.WriteFrame(_camRegion);
             //Depending on phase call process method to control laser power and switch phase if appropriate
             switch (_experimentPhase)
