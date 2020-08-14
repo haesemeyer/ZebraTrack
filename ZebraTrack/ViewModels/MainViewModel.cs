@@ -26,6 +26,9 @@ using ipp;
 
 using ZebraTrack.Experiments;
 using System.Windows.Input;
+using System.ComponentModel;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ZebraTrack.ViewModels
 {
@@ -85,6 +88,16 @@ namespace ZebraTrack.ViewModels
         /// The type of image to display during preview
         /// </summary>
         ImageType _displayImage;
+
+        /// <summary>
+        /// Radius of a circular mask drawn during preview
+        /// </summary>
+        private int _maskRadius;
+
+        /// <summary>
+        /// The image of the mask that will be drawn
+        /// </summary>
+        private Image8 _maskImage;
 
         #endregion
 
@@ -182,6 +195,27 @@ namespace ZebraTrack.ViewModels
         }
 
         /// <summary>
+        /// Radius of a circular mask drawn during preview
+        /// </summary>
+        public int MaskRadius
+        {
+            get
+            {
+                return _maskRadius;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(MaskRadius), "MaskRadius cannot be smaller than 0");
+                //If the mask is already initialized, create the new image
+                if (_maskImage != null)
+                    CreateCircularMask(_maskImage, new IppiPoint(_maskImage.Width / 2, _maskImage.Height / 2), value);
+                _maskRadius = value;
+                RaisePropertyChanged(nameof(MaskRadius));
+            }
+        }
+
+        /// <summary>
         /// Indicates whether we are running an
         /// experiment or if we are in preview mode
         /// </summary>
@@ -256,6 +290,7 @@ namespace ZebraTrack.ViewModels
             ExperimentName = "Experiment01";
             FishName = "TLAB";
             Comment = "";
+            MaskRadius = 300;
             DOB = DateTime.Now - new TimeSpan(5, 0, 0, 0);
             DisplayImage = ImageType.Camera;
             if (IsInDesignMode)
@@ -362,6 +397,64 @@ namespace ZebraTrack.ViewModels
                 ip.ippiCopy_8u_C1R(image[copyStart], image.Stride, regionImage[destX, destY], regionImage.Stride, copySize);
         }
 
+        /// <summary>
+        /// Draws a multiplicative mask for positioning a circular disk highlighting the center
+        /// and circumference of a defined circle. Marked pixels are set to 0 all other to 1
+        /// </summary>
+        /// <param name="maskImage">The image on which the mask is drawn</param>
+        /// <param name="center">The center of the circle - will be marked with 10px sized filled circle</param>
+        /// <param name="maskRadius">The radius of the circle - will be marked with 3px wide line on the outside of maskRadius</param>
+        public static void CreateCircularMask(Image8 maskImage, IppiPoint center, int maskRadius)
+        {
+            if (maskImage == null)
+                throw new ArgumentNullException(nameof(maskImage));
+            if (maskImage.IsDisposed)
+                throw new ObjectDisposedException(nameof(maskImage));
+            //Set all pixels to 1
+            ip.ippiSet_8u_C1R(1, maskImage.Image, maskImage.Stride, maskImage.Size);
+            //Loop over pixels that are within the outer square of the mask, considering the line thickness as well
+            int minX = center.x - maskRadius - 3;
+            if (minX < 0)
+                minX = 0;
+            int maxX = center.x + maskRadius + 3;
+            if (maxX >= maskImage.Size.width)
+                maxX = maskImage.Size.width - 1;
+            int minY = center.y - maskRadius - 3;
+            if (minY < 0)
+                minY = 0;
+            int maxY = center.y + maskRadius + 3;
+            if (maxY >= maskImage.Size.height)
+                maxY = maskImage.Size.height - 1;
+            IppiPoint testP = new IppiPoint();
+            for(int x = minX; x <= maxX; x++)
+            {
+                for(int y = minY; y <= maxY; y++)
+                {
+                    testP.x = x;
+                    testP.y = y;
+                    //Test if we are either in the boundary line or within the innner marker
+                    var dist = Distance.Euclidian(center, testP);
+                    if (dist <= 10 || (dist >= maskRadius && dist <= maskRadius + 3))
+                    {
+                        byte* pixel = maskImage.Image + x + maskImage.Stride * y;
+                        *pixel = 0;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Uses multiplication to draw a mask onto an image
+        /// </summary>
+        /// <param name="maskImage">The mask image to draw</param>
+        /// <param name="image">The camera image to draw the mask on</param>
+        public static void DrawMask(Image8 maskImage, Image8 image)
+        {
+            if (maskImage.Size.width != image.Size.width || maskImage.Size.height != image.Size.height)
+                throw new ArgumentException("Both images need to have the same dimensions");
+            ip.ippiMul_8u_C1IRSfs(maskImage.Image, maskImage.Stride, image.Image, image.Stride, image.Size, 0);
+        }
+
         #endregion
 
         #region ThreadProcedures
@@ -430,7 +523,19 @@ namespace ZebraTrack.ViewModels
                                 }
                                 else
                                 {
-                                    
+                                    //In preview we also apply our mask
+                                    if (experiment is PreviewTrack)
+                                    {
+                                        if (_maskImage == null || _maskImage.Width != image.Width || _maskImage.Height != image.Height)
+                                        {
+                                            if (_maskImage != null)
+                                                _maskImage.Dispose();
+                                            _maskImage = new Image8(image.Width, image.Height);
+                                            CreateCircularMask(_maskImage, new IppiPoint(image.Width / 2, image.Height / 2), MaskRadius);
+                                        }
+                                        DrawMask(_maskImage, image);
+                                    }
+
                                     if (fishCentroid != null)
                                         CopyRegionImage(fishCentroid.Value, fishImage, image);
                                     MainImage.CMax = 255;
@@ -510,6 +615,11 @@ namespace ZebraTrack.ViewModels
             {
                 _acquisitionThread.Dispose();
                 _acquisitionThread = null;
+            }
+            if(_maskImage != null)
+            {
+                _maskImage.Dispose();
+                _maskImage = null;
             }
             base.Dispose(disposing);
         }
