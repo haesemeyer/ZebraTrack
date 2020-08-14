@@ -60,8 +60,8 @@ namespace ZebraTrack.ViewModels
             RampLength = 60;
             RestLength = RampLength * 2;
             NTrials = 10;
-            BaseLaserPower = 300;
-            PeakLaserPower = 2000;
+            BaseLaserPower = 100;
+            PeakLaserPower = 700;
         }
 
         /// <summary>
