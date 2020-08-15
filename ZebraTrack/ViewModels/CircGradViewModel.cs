@@ -56,11 +56,11 @@ namespace ZebraTrack.ViewModels
         public CircGradViewModel()
         {
             HabituationLength = 10 * 60;
-            PreLength = 30 * 60;
+            PreLength = 20 * 60;
             GradientLength = PreLength;
             NTrials = 1;
-            CenterLaserPower = 100;
-            EdgeLaserPower = 750;
+            CenterLaserPower = 0;
+            EdgeLaserPower = 700;
         }
 
         /// <summary>
