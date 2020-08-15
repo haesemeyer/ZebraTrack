@@ -142,6 +142,7 @@ namespace ZebraTrack.Experiments
             }
             _preFrames = preSeconds * FrameRate;
             _gradFrames = gradientSeconds * FrameRate;
+            _habitFrames = habitSeconds * FrameRate;
             _nTrials = nTrials;
             _currentPhaseFrame = 0;
             _currentTrial = 0;//Start at 0 during habituation will be pre-incremented as we enter pre-phase and will be checked for completing at end of gradient phase
