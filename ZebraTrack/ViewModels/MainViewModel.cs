@@ -209,11 +209,13 @@ namespace ZebraTrack.ViewModels
                     throw new ArgumentOutOfRangeException(nameof(MaskRadius), "MaskRadius cannot be smaller than 0");
                 //If the mask is already initialized, create the new image
                 if (_maskImage != null)
-                    CreateCircularMask(_maskImage, new IppiPoint(_maskImage.Width / 2, _maskImage.Height / 2), value);
+                    CreateCircularMask(_maskImage, DishCenter, value);
                 _maskRadius = value;
                 RaisePropertyChanged(nameof(MaskRadius));
             }
         }
+
+        public IppiPoint DishCenter { get; private set; }
 
         /// <summary>
         /// Indicates whether we are running an
@@ -339,6 +341,8 @@ namespace ZebraTrack.ViewModels
             }
             exp.Comment = Comment;
             exp.DOB = DOB;
+            exp.DishCenter = DishCenter;
+            exp.Radius = MaskRadius;
             exp.WriteExperimentInformation();
             //dispose previewthread
             if (_acquisitionThread != null)
@@ -531,7 +535,8 @@ namespace ZebraTrack.ViewModels
                                             if (_maskImage != null)
                                                 _maskImage.Dispose();
                                             _maskImage = new Image8(image.Width, image.Height);
-                                            CreateCircularMask(_maskImage, new IppiPoint(image.Width / 2, image.Height / 2), MaskRadius);
+                                            DishCenter = new IppiPoint(_maskImage.Width / 2, _maskImage.Height / 2);
+                                            CreateCircularMask(_maskImage, DishCenter, MaskRadius);
                                         }
                                         DrawMask(_maskImage, image);
                                     }

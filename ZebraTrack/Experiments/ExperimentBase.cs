@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2016 Martin Haesemeyer
+Copyright 2016-2020 Martin Haesemeyer
    Licensed under the MIT License, see License.txt.
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -61,6 +61,16 @@ namespace ZebraTrack.Experiments
         public DateTime DOB { get; set; }
 
         /// <summary>
+        /// The center of the dish
+        /// </summary>
+        public IppiPoint DishCenter { get; set; }
+
+        /// <summary>
+        /// The radius of a circular dish
+        /// </summary>
+        public int Radius { get; set; }
+
+        /// <summary>
         /// The time the experiment object was constructed
         /// </summary>
         protected DateTime StartTime { get; set; }
@@ -111,6 +121,8 @@ namespace ZebraTrack.Experiments
                 infoWriter.WriteLine("Experiment name: {0}", Name);
                 infoWriter.WriteLine("Fish name: {0}", FishID);
                 infoWriter.WriteLine("Fish DOB: {0}", DOB);
+                infoWriter.WriteLine("Dish center (x, y): ({0}, {1})", DishCenter.x, DishCenter.y);
+                infoWriter.WriteLine("Dish radius: {0}", Radius);
                 infoWriter.WriteLine("------");
                 infoWriter.WriteLine("Comment:");
                 infoWriter.WriteLine(Comment);
