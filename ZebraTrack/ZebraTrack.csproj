@@ -84,6 +84,7 @@
     <Compile Include="Experiments\ExperimentBase.cs" />
     <Compile Include="Experiments\IExperiment.cs" />
     <Compile Include="Experiments\LaserAlignment.cs" />
+    <Compile Include="Experiments\CircularGradient.cs" />
     <Compile Include="Experiments\PreviewTrack.cs" />
     <Compile Include="Experiments\OpenLoopLaserRamp.cs" />
     <Compile Include="Experiments\TargetingTest.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="mhapi\Utilities\StringConvertibleList.cs" />
     <Compile Include="mhapi\Utilities\WeakReference.cs" />
     <Compile Include="ViewModels\IExperimentVM.cs" />
+    <Compile Include="ViewModels\CircGradViewModel.cs" />
     <Compile Include="ViewModels\TargetingTestViewModel.cs" />
     <Compile Include="ViewModels\LaserAlignmentViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -211,6 +213,9 @@
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CircGradView.xaml.cs">
+      <DependentUpon>CircGradView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OLLRampView.xaml.cs">
       <DependentUpon>OLLRampView.xaml</DependentUpon>
@@ -244,6 +249,10 @@
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CircGradView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\OLLRampView.xaml">
       <Generator>MSBuild:Compile</Generator>

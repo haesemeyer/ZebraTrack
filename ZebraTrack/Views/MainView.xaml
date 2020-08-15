@@ -60,6 +60,11 @@
                         <local:OLLRampView HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,32,0,0"/>
                     </Grid>
                 </TabItem>
+                <TabItem Header="C. Gradient">
+                    <Grid HorizontalAlignment="Left" Height="353" VerticalAlignment="Top" Width="239" Margin="0,0,-1,-1">
+                        <local:CircGradView HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12,30,0,0"/>
+                    </Grid>
+                </TabItem>
             </TabControl>
             <Button x:Name="button" Content="{Binding IsRunning, Converter={StaticResource BoolToStopStartConverter}, Mode=OneWay}" Margin="30.314,12,0,12.04" Grid.Row="2" d:LayoutOverrides="Height" Command="{Binding StartStopClick, Mode=OneWay}" HorizontalAlignment="Left" Width="75"/>
             <Button x:Name="button1" Content="Restart preview" HorizontalAlignment="Right" Margin="0,12,24.43,12.04" Grid.Row="2" Width="89.211" d:LayoutOverrides="Height" Command="{Binding RestartPreviewClick, Mode=OneWay}" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
