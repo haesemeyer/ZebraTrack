@@ -331,7 +331,7 @@ namespace ZebraTrack.Experiments
         public override bool ProcessNext(int frameNumber, Image8 camImage, out IppiPoint? poi)
         {
             base.ProcessNext(frameNumber, camImage, out poi);
-            _lastFrame = frameNumber;
+            _lastFrame++;
             if (_scanner == null)
             {
                 System.Diagnostics.Debug.WriteLine("Scanner was not initialized. Terminating experiment");
