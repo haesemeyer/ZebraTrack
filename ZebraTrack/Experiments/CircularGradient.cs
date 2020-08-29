@@ -23,8 +23,7 @@ namespace ZebraTrack.Experiments
 {
 
     /// <summary>
-    /// Open loop paradigm presenting an increasing power ramp followed by a decreasing power ramp
-    /// to larval zebrafish. Up/down ramps occur back-to-back and are interleaved with resting phases
+    /// Closed loop circular gradient paradigm
     /// </summary>
     unsafe class CircularGradient : TrackingExperiment
     {
