@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Experiments\Replay.cs" />
     <Compile Include="Experiments\ExperimentBase.cs" />
     <Compile Include="Experiments\IExperiment.cs" />
     <Compile Include="Experiments\LaserAlignment.cs" />
