@@ -33,7 +33,7 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// Identifies the type of the original closed loop experiment
         /// </summary>
-        public enum OriginalType { CircularGradient };
+        public enum OriginalType { Unknown, CircularGradient };
 
         #region Members
 
@@ -233,6 +233,12 @@ namespace ZebraTrack.Experiments
         {
             base.ProcessNext(frameNumber, camImage, out poi);
             _lastFrame = frameNumber;
+            if (_originalType == OriginalType.Unknown)
+            {
+                //This should never happen...
+                System.Diagnostics.Debug.WriteLine("Unknown original experiment type. Terminating experiment");
+                return false;
+            }
             if (_scanner == null)
             {
                 System.Diagnostics.Debug.WriteLine("Scanner was not initialized. Terminating experiment");
