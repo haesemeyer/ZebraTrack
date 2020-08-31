@@ -29,6 +29,7 @@ using System.Windows.Input;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows;
 
 namespace ZebraTrack.ViewModels
 {
@@ -337,6 +338,11 @@ namespace ZebraTrack.ViewModels
             else
             {
                 System.Diagnostics.Debug.WriteLine("No experiment view model was active. Exiting.");
+                return;
+            }
+            if (exp == null)
+            {
+                MessageBox.Show("Could not create experiment. Check parameters.", "Failure to launch", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             exp.Comment = Comment;
