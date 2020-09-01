@@ -187,11 +187,14 @@ namespace ZebraTrack.Experiments
                     infoWriter.WriteLine("Circular gradient experiment");
                     break;
             }
-            infoWriter.WriteLine("------------------------");
+            infoWriter.WriteLine("-----------------------------------------------------------");
             infoWriter.WriteLine("Original info file data follows:");
             foreach (string item in _originalInfoData)
+            {
+                infoWriter.Write('\t');
                 infoWriter.WriteLine(item);
-            infoWriter.WriteLine("------------------------");
+            }
+            infoWriter.WriteLine("-----------------------------------------------------------");
             infoWriter.WriteLine();
         }
 
