@@ -83,7 +83,7 @@ namespace ZebraTrack.Experiments
             /// For each pixel we have accumulated as error correct
             /// mirrors by this many volts
             /// </summary>
-            public const float VoltsPerErrorPixel = 0.0005f;
+            public const float VoltsPerErrorPixel = 0.002f;//0.0005f
 
             /// <summary>
             /// Accumulated x error in pixels
@@ -629,6 +629,7 @@ namespace ZebraTrack.Experiments
                             _interpParams.CurrentVolts.y), out _interpParams.NextRequest))
                         {
                             //lookup table complete - Precompute interpolations and save to file
+                            _experimentPhase = ExperimentPhases.Done;
                             _interpParams.LookupTable.Precompute();
                             var calibFile = File.CreateText("main.calib");
                             _interpParams.LookupTable.SaveToFile(calibFile);
@@ -636,7 +637,8 @@ namespace ZebraTrack.Experiments
                             System.Diagnostics.Debug.WriteLine("Calibration updated");
                             return;
                         }
-                        System.Diagnostics.Debug.WriteLine("Force add point to lookup table");
+                        System.Diagnostics.Debug.WriteLine("Force add point to lookup table: {0}/{1}", _interpParams.CurrentPoint.x,
+                            _interpParams.CurrentPoint.y);
                         _interpParams.RetryCount = 0;
                     }
                 }
