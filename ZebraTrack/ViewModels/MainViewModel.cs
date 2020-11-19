@@ -210,7 +210,7 @@ namespace ZebraTrack.ViewModels
                     throw new ArgumentOutOfRangeException(nameof(MaskRadius), "MaskRadius cannot be smaller than 0");
                 //If the mask is already initialized, create the new image
                 if (_maskImage != null)
-                    CreateCircularMask(_maskImage, DishCenter, value);
+                    CreateCircularMask(_maskImage, DishCenter, value, true);
                 _maskRadius = value;
                 RaisePropertyChanged(nameof(MaskRadius));
             }
@@ -414,7 +414,7 @@ namespace ZebraTrack.ViewModels
         /// <param name="maskImage">The image on which the mask is drawn</param>
         /// <param name="center">The center of the circle - will be marked with 10px sized filled circle</param>
         /// <param name="maskRadius">The radius of the circle - will be marked with 3px wide line on the outside of maskRadius</param>
-        public static void CreateCircularMask(Image8 maskImage, IppiPoint center, int maskRadius)
+        public static void CreateCircularMask(Image8 maskImage, IppiPoint center, int maskRadius, bool addLookupBorder)
         {
             if (maskImage == null)
                 throw new ArgumentNullException(nameof(maskImage));
@@ -449,6 +449,18 @@ namespace ZebraTrack.ViewModels
                         byte* pixel = maskImage.Image + x + maskImage.Stride * y;
                         *pixel = 0;
                     }
+                }
+            }
+            if (addLookupBorder)
+            {
+                for (int x = 0; x <= maskImage.Size.width; x++)
+                {
+                    byte* pixel = maskImage.Image + x + maskImage.Stride * 783;
+                    *pixel = 0;
+                    pixel = maskImage.Image + x + maskImage.Stride * 784;
+                    *pixel = 0;
+                    pixel = maskImage.Image + x + maskImage.Stride * 785;
+                    *pixel = 0;
                 }
             }
         }
@@ -542,7 +554,7 @@ namespace ZebraTrack.ViewModels
                                                 _maskImage.Dispose();
                                             _maskImage = new Image8(image.Width, image.Height);
                                             DishCenter = new IppiPoint(_maskImage.Width / 2, _maskImage.Height / 2);
-                                            CreateCircularMask(_maskImage, DishCenter, MaskRadius);
+                                            CreateCircularMask(_maskImage, DishCenter, MaskRadius, true);
                                         }
                                         DrawMask(_maskImage, image);
                                     }
