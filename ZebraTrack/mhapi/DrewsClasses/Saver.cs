@@ -38,12 +38,9 @@ namespace MHApi.DrewsClasses {
         public Saver(string path, string baseName, bool appendDateFolder) {
             var basePath = Path.IsPathRooted(path) ? path : Path.Combine(BasePath, path);
             var now = DateTime.Now;
-#if laser
             var dateFolder = (now.Year % 100).ToString("D2") + now.Month.ToString("D2") + now.Day.ToString("D2");
-#else
-            var dateFolder = now.Month.ToString("D2") + now.Day.ToString("D2") + (now.Year % 100).ToString("D2");
-#endif
             SavePath = Path.Combine(basePath, dateFolder);
+            SavePath = Path.Combine(SavePath, baseName);
             BaseName = baseName;
         }
 
