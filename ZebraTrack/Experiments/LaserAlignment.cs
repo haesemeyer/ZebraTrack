@@ -501,7 +501,7 @@ namespace ZebraTrack.Experiments
                 _experimentPhase = ExperimentPhases.InterpTable;
                 _interpParams = new InterpolationParams();
                 //At this point have 10 pixel borders around camera image in the interpolation ROI
-                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(10, 10, camImage.Width-20, camImage.Height-20), 4);
+                _interpParams.LookupTable = new BLIScanLookupTable(new IppiROI(8, 8, camImage.Width-16, camImage.Height-16), 4);
             }
             _threePointFrame++;
         }
@@ -616,7 +616,7 @@ namespace ZebraTrack.Experiments
                         System.Diagnostics.Debug.WriteLine("Error > 100. Trying to recover.");
                     }
                     _interpParams.RetryCount++;
-                    if (_interpParams.RetryCount > 250)
+                    if (_interpParams.RetryCount > 500)
                     {
                         //We can't reach the point. Add it to the table nonetheless and continue (may be occluded point)
                         //At this point the errors are likely meaningless so reset them
