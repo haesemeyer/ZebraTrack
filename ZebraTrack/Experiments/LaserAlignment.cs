@@ -50,7 +50,7 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// Type to describe the current experimental phase
         /// </summary>
-        public enum ExperimentPhases { BGround = 0, ThreePoint = 1, InterpTable = 2, Done = 3 }
+        public enum ExperimentPhases { BGround = 0, ThreePoint = 1, InterpTable = 2, Check=3, Done = 4 }
 
         /// <summary>
         /// Container for the points identified during 3-point calibration
@@ -206,6 +206,11 @@ namespace ZebraTrack.Experiments
         int _threePointFrame;
 
         /// <summary>
+        /// If true, check calibration instead of performing it
+        /// </summary>
+        bool _calibrationCheck;
+
+        /// <summary>
         /// The points identified during 3-point calibration
         /// </summary>
         CalibrationPoints _threePointPoints;
@@ -229,13 +234,16 @@ namespace ZebraTrack.Experiments
         /// Creates a new LaserAlignment object
         /// </summary>
         /// <param name="frameRate">The frameRate of the experiment</param>
-        public LaserAlignment(int frameRate) : base("", "", "", 0, frameRate)
+        /// <param name="check">Determines if to calibrate (false) or check calibration (true)</param>
+        public LaserAlignment(int frameRate, bool check) : base("", "", "", 0, frameRate)
         {
             //TODO: Here we should probably get information about actual ROI to use as well as where to store calibration data
             _laser = new SDLPS500Controller(Properties.Settings.Default.DAQ, Properties.Settings.Default.LaserAO);
             string xchannel = Properties.Settings.Default.DAQ + "/" + Properties.Settings.Default.ScannerX;
             string ychannel = Properties.Settings.Default.DAQ + "/" + Properties.Settings.Default.ScannerY;
             _scanner = new RandomAccessScanner(null, xchannel, ychannel, -10, 10);
+            _calibrationCheck = check;
+
         }
 
         #region Properties
@@ -389,9 +397,31 @@ namespace ZebraTrack.Experiments
                 _bgModel.UpdateBackground(camImage);
             if (frameNumber >= Properties.Settings.Default.FrameRate * 5)
             {
-                _experimentPhase = ExperimentPhases.ThreePoint;
-                _threePointFrame = 0;
-                _threePointPoints = new CalibrationPoints();
+                if (!_calibrationCheck)
+                {
+                    _experimentPhase = ExperimentPhases.ThreePoint;
+                    _threePointFrame = 0;
+                    _threePointPoints = new CalibrationPoints();
+                }
+                else
+                {
+                    try
+                    {
+                        TextReader reader = File.OpenText("main.calib");
+                        var scanTable = BLIScanLookupTable.LoadFromFile(reader);
+                        _scanner.Dispose();
+                        string xchannel = Properties.Settings.Default.DAQ + "/" + Properties.Settings.Default.ScannerX;
+                        string ychannel = Properties.Settings.Default.DAQ + "/" + Properties.Settings.Default.ScannerY;
+                        _scanner = new RandomAccessScanner(scanTable, xchannel, ychannel, -10, 10);
+                        reader.Dispose();
+                        _experimentPhase = ExperimentPhases.Check;
+                    }
+                    catch (IOException)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Could not find calibration data. No targeting available");
+                        _experimentPhase = ExperimentPhases.Done;
+                    }
+                }
             }
         }
 
@@ -652,12 +682,20 @@ namespace ZebraTrack.Experiments
                 _interpParams.StepFrame++;//Waiting for mirror to reach final position
         }
 
+        protected void CheckCalibration(int frameNumber, Image8 camImage, out IppiPoint? poi)
+        {
+            poi = null;
+        }
+
         protected override void WriteExperimentInfo(StreamWriter infoWriter)
         {
             base.WriteExperimentInfo(infoWriter);
             if (infoWriter != null)
             {
-                infoWriter.WriteLine("Laser Alignment performed");
+                if (_calibrationCheck)
+                    infoWriter.WriteLine("Laser Alignment checked");
+                else
+                    infoWriter.WriteLine("Laser Alignment performed");
                 infoWriter.WriteLine();
             }
         }
@@ -870,6 +908,9 @@ namespace ZebraTrack.Experiments
                     break;
                 case ExperimentPhases.InterpTable:
                     InterpTableCalibration(frameNumber, camImage, out poi);
+                    break;
+                case ExperimentPhases.Check:
+                    CheckCalibration(frameNumber, camImage, out poi);
                     break;
                 default:
                     poi = null;

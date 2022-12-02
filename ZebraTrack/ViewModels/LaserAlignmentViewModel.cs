@@ -28,7 +28,7 @@ namespace ZebraTrack.ViewModels
             string folder = Path.Combine(Properties.Settings.Default.SavePath, "LaserAlignment");
             //TODO: Allow specifying alignment grid spacing [currently 4 pixels], ROI [currently camera FOV -10 px border]
             //and accuracy requirement [currently 0 pixels]
-            return new LaserAlignment(Properties.Settings.Default.FrameRate);
+            return new LaserAlignment(Properties.Settings.Default.FrameRate, false);
         }
     }
 }
