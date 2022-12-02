@@ -60,7 +60,7 @@ namespace ZebraTrack.ViewModels
             GradientLength = PreLength;
             NTrials = 1;
             CenterLaserPower = 0;
-            EdgeLaserPower = 700;
+            EdgeLaserPower = 1500;
         }
 
         /// <summary>
