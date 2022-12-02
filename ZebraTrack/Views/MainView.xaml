@@ -34,7 +34,7 @@
                 <TextBox x:Name="tbExpName" Height="23" Margin="114.694,2.96,10,0" TextWrapping="Wrap" Text="{Binding ExperimentName}" VerticalAlignment="Top" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
                 <Label x:Name="label_Copy" Content="Fish type" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" d:LayoutOverrides="HorizontalAlignment" Margin="2,33,0,0"/>
                 <TextBox x:Name="tbFishName" Margin="114.694,35.96,10,94.04" TextWrapping="Wrap" Text="{Binding FishName}" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
-                <DatePicker Margin="114.694,66.96,10,62.04" d:LayoutOverrides="Height" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}" DisplayDate="{Binding DOB}"/>
+                <DatePicker Margin="114.694,66.96,10,62.04" d:LayoutOverrides="Height" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}" SelectedDate="{Binding DOB}"/>
                 <Label x:Name="label_Copy1" Content="Date of birth" HorizontalAlignment="Left" Foreground="Gray" Margin="2,66,0,61.04" d:LayoutOverrides="HorizontalAlignment, Height"/>
                 <Label x:Name="label_Copy2" Content="Comment" HorizontalAlignment="Left" Foreground="Gray" Margin="2,0,0,16.04" d:LayoutOverrides="HorizontalAlignment" VerticalAlignment="Bottom"/>
                 <TextBox x:Name="tbComment" Height="56.04" Margin="67.267,0,0,0" TextWrapping="Wrap" Text="{Binding Comment}" VerticalAlignment="Bottom" IsEnabled="{Binding IsRunning, Converter={StaticResource NegateBoolConverter}, Mode=OneWay}"/>
