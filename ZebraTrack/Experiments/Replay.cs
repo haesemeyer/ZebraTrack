@@ -33,7 +33,7 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// Identifies the type of the original closed loop experiment
         /// </summary>
-        public enum OriginalType { Unknown, CircularGradient };
+        public enum OriginalType { Unknown, CircularGradient, Plaid };
 
         #region Members
 
@@ -158,7 +158,7 @@ namespace ZebraTrack.Experiments
 
         double ProcessTrackItems(string[] items, out int originalPhase, out int originalTrial)
         {
-            if (_originalType == OriginalType.CircularGradient)
+            if (_originalType == OriginalType.CircularGradient || _originalType == OriginalType.Plaid)
             {
                 double power;
                 bool success = double.TryParse(items[6], out power);
@@ -185,6 +185,9 @@ namespace ZebraTrack.Experiments
             {
                 case OriginalType.CircularGradient:
                     infoWriter.WriteLine("Circular gradient experiment");
+                    break;
+                case OriginalType.Plaid:
+                    infoWriter.WriteLine("Plaid experiment");
                     break;
             }
             infoWriter.WriteLine("-----------------------------------------------------------");

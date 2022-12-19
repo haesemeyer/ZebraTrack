@@ -79,6 +79,8 @@ namespace ZebraTrack.ViewModels
                         var s = infoReader.ReadLine();
                         if (s.Contains("Circular Gradient"))
                             originalType = Replay.OriginalType.CircularGradient;
+                        if (s.Contains("Thermal plaid"))
+                            originalType = Replay.OriginalType.Plaid;
                         info_content.Enqueue(s);
                     }
                     infoReader.Close();
