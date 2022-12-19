@@ -195,7 +195,7 @@ namespace ZebraTrack.ViewModels
 
         public ExperimentBase CreateExperiment(string name, string fishID)
         {
-            string folder = Path.Combine(Properties.Settings.Default.SavePath, "CircularGradient");
+            string folder = Path.Combine(Properties.Settings.Default.SavePath, "Plaid");
             Plaid plaid = new Plaid(HabituationLength, PreLength, PlaidLength, NTrials, Properties.Settings.Default.FrameRate, Properties.Settings.Default.PixelsPermm, folder, name, fishID);
             plaid.TroughLaserPower = TroughLaserPower;
             plaid.PeakLaserPower = PeakLaserPower;
