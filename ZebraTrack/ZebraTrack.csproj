@@ -212,6 +212,9 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OLLRampViewModel.cs" />
     <Compile Include="ViewModels\TWExperimentViewModel.cs" />
+    <Compile Include="Views\PlaidView.xaml.cs">
+      <DependentUpon>PlaidView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReplayView.xaml.cs">
       <DependentUpon>ReplayView.xaml</DependentUpon>
     </Compile>
@@ -246,6 +249,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="mhapi\DrewsClasses\EZImage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PlaidView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

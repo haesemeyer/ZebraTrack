@@ -1,0 +1,36 @@
+﻿<mhApi:WindowAwareView x:Class="ZebraTrack.Views.PlaidView"
+             xmlns:mhApi ="clr-namespace:MHApi.GUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:ZebraTrack.ViewModels"
+             xmlns:local="clr-namespace:ZebraTrack.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" Loaded="WindowAwareView_Loaded" Background="#FF212121" Width="209">
+    <mhApi:WindowAwareView.Resources>
+        <vm:PlaidViewModel x:Key="mvmDataSource"/>
+        <mhApi:NegateBoolConverter x:Key="NegateBoolConverter"/>
+    </mhApi:WindowAwareView.Resources>
+    <mhApi:WindowAwareView.DataContext>
+        <Binding Source="{StaticResource mvmDataSource}" x:Name="ViewModel" x:FieldModifier="public"/>
+    </mhApi:WindowAwareView.DataContext>
+    <Grid>
+        <Label x:Name="label" Content="Habituation length [s]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,71,0,0"/>
+        <TextBox x:Name="tbExpName" Height="23" Margin="148,74,10,0" TextWrapping="Wrap" Text="{Binding HabituationLength}" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock" Margin="10,10,29,0" TextWrapping="Wrap" Text="Experiment to present a closed loop circular gradient to a larval zebrafish." VerticalAlignment="Top" Height="72" Foreground="Gray"/>
+        <Label x:Name="label_Copy" Content="Pre phase length [s]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,101,0,0"/>
+        <TextBox x:Name="tbExpName_Copy" Height="23" Margin="148,104,10,0" TextWrapping="Wrap" Text="{Binding PreLength}" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy1" Content="Plaid length [s]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,132,0,0"/>
+        <TextBox x:Name="tbExpName_Copy1" Height="23" Margin="148,135,10,0" TextWrapping="Wrap" Text="{Binding PlaidLength}" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy2" Content="Number of trials" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,164,0,0"/>
+        <TextBox x:Name="tbExpName_Copy2" Height="23" Margin="148,167,10,0" TextWrapping="Wrap" Text="{Binding NTrials}" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy3" Content="Trough power [mW]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,196,0,0"/>
+        <TextBox x:Name="tbExpName_Copy3" Height="23" Margin="148,199,10,0" TextWrapping="Wrap" Text="{Binding TroughLaserPower}" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy4" Content="Peak power [mW]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,231,0,0"/>
+        <TextBox x:Name="tbExpName_Copy4" Height="23" Margin="148,234,10,0" TextWrapping="Wrap" Text="{Binding PeakLaserPower}" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy5" Content="Plaid period [mm]" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Gray" Margin="2,264,0,0"/>
+        <TextBox x:Name="tbExpName_Copy5" Height="23" Margin="148,267,10,0" TextWrapping="Wrap" Text="{Binding PlaidPeriodMM}" VerticalAlignment="Top"/>
+
+    </Grid>
+</mhApi:WindowAwareView>
