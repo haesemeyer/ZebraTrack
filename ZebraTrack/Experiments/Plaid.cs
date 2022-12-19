@@ -79,11 +79,6 @@ namespace ZebraTrack.Experiments
         double _peakLaserPower;
 
         /// <summary>
-        /// The period of the plaid stimulus in mm
-        /// </summary>
-        double _plaidPeriodMM;
-
-        /// <summary>
         /// The offset of the plaid in x-direction
         /// </summary>
         int _plaidOffsetX;
@@ -208,17 +203,7 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// The period (peak-to-peak distance) of the plaid in mm
         /// </summary>
-        public double PlaidPeriodMM
-        {
-            get
-            {
-                return _plaidPeriodMM;
-            }
-            set
-            {
-                _plaidPeriodMM = value;
-            }
-        }
+        public double PlaidPeriodMM { get; set; }
 
         /// <summary>
         /// The period (peak-to-peak distance) of the plaid in pixels

@@ -81,6 +81,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Experiments\Plaid.cs" />
     <Compile Include="Experiments\Replay.cs" />
     <Compile Include="Experiments\ExperimentBase.cs" />
     <Compile Include="Experiments\IExperiment.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="mhapi\Utilities\SimpleProfiler.cs" />
     <Compile Include="mhapi\Utilities\StringConvertibleList.cs" />
     <Compile Include="mhapi\Utilities\WeakReference.cs" />
+    <Compile Include="ViewModels\PlaidViewModel.cs" />
     <Compile Include="ViewModels\ReplayViewModel.cs" />
     <Compile Include="ViewModels\IExperimentVM.cs" />
     <Compile Include="ViewModels\CircGradViewModel.cs" />
