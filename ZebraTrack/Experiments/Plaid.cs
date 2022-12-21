@@ -333,9 +333,14 @@ namespace ZebraTrack.Experiments
             //compute laser power based on plaid
             if (fish != null)
             {
-                _laser.LaserPower = 0.5 * Math.Sin(2 * Math.PI * fish.xc / PlaidPeriodPx) * (PeakLaserPower - TroughLaserPower) +
-                    0.5 * Math.Sin(2 * Math.PI * fish.yc / PlaidPeriodPx) * (PeakLaserPower - TroughLaserPower) +
-                    TroughLaserPower;
+                // calculate plaid function in -1/1 range
+                double plaid_factor = 0.5 * Math.Sin(2 * Math.PI * fish.xc / PlaidPeriodPx) + 0.5 * Math.Sin(2 * Math.PI * fish.yc / PlaidPeriodPx);
+                double plaid_average = (PeakLaserPower - TroughLaserPower) / 2 + TroughLaserPower; //Power at plaid_factor = 0
+                double plaid_amplitude = (PeakLaserPower - TroughLaserPower) / 2;
+                double power = plaid_average + plaid_factor * plaid_amplitude;
+                if (power < 0)
+                    power = 0;
+                _laser.LaserPower = power;
             }
             if (_currentPhaseFrame >= _plaidFrames)
             {
