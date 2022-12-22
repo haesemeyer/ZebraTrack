@@ -180,6 +180,7 @@
     <Compile Include="mhapi\Scanning\PointVoltageConverter.cs" />
     <Compile Include="mhapi\Scanning\RandomAccessScanner.cs" />
     <Compile Include="mhapi\Scanning\ScanLookupTable.cs" />
+    <Compile Include="mhapi\Threading\AsyncTiffWriter.cs" />
     <Compile Include="mhapi\Threading\PrCoImageRingBuffer.cs" />
     <Compile Include="mhapi\Threading\PrCoImageRingBuffer16.cs" />
     <Compile Include="mhapi\Threading\ProducerConsumer.cs" />
