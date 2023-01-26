@@ -17,6 +17,7 @@ using MHApi.DrewsClasses;
 using MHApi.Imaging;
 using MHApi.Laser;
 using MHApi.Scanning;
+using MHApi.Threading;
 
 namespace ZebraTrack.Experiments
 {
@@ -46,7 +47,7 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// Writes fish region camera image
         /// </summary>
-        TiffWriter _imageWriter;
+        AsyncTiffWriter _imageWriter;
 
         SDLPS500Controller _laser;
 

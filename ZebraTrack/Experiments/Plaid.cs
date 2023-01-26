@@ -18,6 +18,7 @@ using MHApi.Imaging;
 using MHApi.Laser;
 using MHApi.Scanning;
 using MHApi.RND;
+using MHApi.Threading;
 using ZebraTrack.ViewModels;
 
 namespace ZebraTrack.Experiments
@@ -41,12 +42,12 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// Writes fish region camera image
         /// </summary>
-        TiffWriter _imageWriter;
+        AsyncTiffWriter _imageWriter;
 
         /// <summary>
         /// Writes fish region background image
         /// </summary>
-        TiffWriter _backgroundWriter;
+        AsyncTiffWriter _backgroundWriter;
 
         /// <summary>
         /// Image for region around fish

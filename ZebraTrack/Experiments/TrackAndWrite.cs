@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using ipp;
 using MHApi.DrewsClasses;
+using MHApi.Threading;
 using ZebraTrack.ViewModels;
 
 namespace ZebraTrack.Experiments
@@ -50,12 +51,12 @@ namespace ZebraTrack.Experiments
         /// <summary>
         /// Writes fish region camera image
         /// </summary>
-        TiffWriter _imageWriter;
+        AsyncTiffWriter _imageWriter;
 
         /// <summary>
         /// Writes fish region background model
         /// </summary>
-        TiffWriter _backgroundWriter;
+        AsyncTiffWriter _backgroundWriter;
 
         /// <summary>
         /// Image for region around fish

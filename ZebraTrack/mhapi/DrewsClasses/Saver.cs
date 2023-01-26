@@ -12,8 +12,7 @@ Copyright 2011 Drew Robson
 
 using System;
 using System.IO;
-using MHApi.GUI;
-using MHApi.Imaging;
+using MHApi.Threading;
 
 namespace MHApi.DrewsClasses {
     public class Saver{
@@ -91,7 +90,7 @@ namespace MHApi.DrewsClasses {
             return new StreamWriter(fullPath);
         }
 
-        public TiffWriter GetTiffWriter(string suffix, bool renameIfExists) {
+        public AsyncTiffWriter GetTiffWriter(string suffix, bool renameIfExists) {
             CheckPath();
             var fullPath = Path.Combine(SavePath, BaseName + suffix + ".tif");
             if (File.Exists(fullPath))
@@ -99,7 +98,7 @@ namespace MHApi.DrewsClasses {
                     return GetTiffWriter(suffix + "_", true);
                 else
                     throw new IOException("File " + fullPath + " already exists");
-            return new TiffWriter(fullPath);
+            return new AsyncTiffWriter(fullPath);
         }
 
     }
