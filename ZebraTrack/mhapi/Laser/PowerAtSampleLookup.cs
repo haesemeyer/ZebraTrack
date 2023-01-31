@@ -199,14 +199,14 @@ namespace MHApi.Laser
         private bool _raise_oor;
 
         /// <summary>
-        /// The value and index of the middle pas bin
+        /// Lookup tree to transform from power at sample to control voltage
         /// </summary>
-        private Tuple<double, int> _pas_halfway;
+        private TransformTree _pas_to_aov;
 
         /// <summary>
-        /// The value and index of the middle aov bin
+        /// Lookup tree to transform from control voltage to power at sample
         /// </summary>
-        private Tuple<double, int> _aov_halfway;
+        private TransformTree _aov_to_pas;
 
         #endregion
 
@@ -229,57 +229,21 @@ namespace MHApi.Laser
                 if (pas[i] <= pas[i - 1] || aov[i] <= aov[i - 1])
                     throw new ArgumentException("Both pas and aov need to increase monotonically");
             }
-            // Copy over values
-            _measured_pas_mW = new double[pas.Length];
-            pas.CopyTo(_measured_pas_mW, 0);
-            _bin_aov_values_V = new double[aov.Length];
-            aov.CopyTo(_bin_aov_values_V, 0);
             _raise_oor = raise_out_of_range;
-            //Instead of going with a full tree, to increase lookup efficiency somewhat
-            //we determine the half-way point for both our sets
-            int ix_half = pas.Length / 2;
-            _pas_halfway = new Tuple<double, int>(pas[ix_half], ix_half);
-            _aov_halfway = new Tuple<double, int>(aov[ix_half], ix_half);
+            _pas_to_aov = new TransformTree(pas, aov);
+            _aov_to_pas = new TransformTree(aov, pas);
         }
 
         #region Methods
 
         public double GetAOVByPower(double power_at_sample_mW)
         {
-            if (power_at_sample_mW > _measured_pas_mW.Max())
-            {
-                if (_raise_oor)
-                    throw new ArgumentOutOfRangeException(nameof(power_at_sample_mW));
-                else
-                    return _bin_aov_values_V[_bin_aov_values_V.Length - 1];
-            }
-            if (power_at_sample_mW < _measured_pas_mW.Min())
-            {
-                if (_raise_oor)
-                    throw new ArgumentOutOfRangeException(nameof(power_at_sample_mW));
-                else
-                    return _bin_aov_values_V[0];
-            }
-            //TODO: The following should be encapsulated in a function operating on
-            //the appropriate values
-            if (power_at_sample_mW == _pas_halfway.Item1)
-                return _aov_halfway.Item1;
-            int start, stop;
-            if (power_at_sample_mW < _pas_halfway.Item1)
-            {
-                start = 0;
-                stop = _pas_halfway.Item2;
-            }
-            else
-            {
-                start = _pas_halfway.Item2;
-                stop = _measured_pas_mW.Length - 1;
-            }
-            for(int i = start; i <= stop; i++)
-            {
-                // Find the corresponding bin boundaries
-            }
-            throw new NotImplementedException();
+            return _pas_to_aov.Transform(power_at_sample_mW, _raise_oor);
+        }
+
+        public double GetPowerByAOV(double control_aov)
+        {
+            return _aov_to_pas.Transform(control_aov, _raise_oor);
         }
 
         #endregion
