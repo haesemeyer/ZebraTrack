@@ -64,8 +64,8 @@ namespace ZebraTrack.ViewModels
             PreLength = 20 * 60;
             PlaidLength = PreLength;
             NTrials = 1;
-            TroughLaserPower = 0;
-            PeakLaserPower = 1500;
+            TroughLaserPower = 50;
+            PeakLaserPower = 1000;
             PlaidPeriodMM = 20;
         }
 

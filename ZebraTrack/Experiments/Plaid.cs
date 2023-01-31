@@ -261,8 +261,8 @@ namespace ZebraTrack.Experiments
             infoWriter.WriteLine("Habituation length {0} [s]", _habitFrames / FrameRate);
             infoWriter.WriteLine("Pre gradient length {0} [s]", _preFrames / FrameRate);
             infoWriter.WriteLine("Plaid length {0} [s]", _plaidFrames / FrameRate);
-            infoWriter.WriteLine("Trough power {0} [mW]", TroughLaserPower);
-            infoWriter.WriteLine("Peak power {0} [mW]", PeakLaserPower);
+            infoWriter.WriteLine("Trough power at sample {0} [mW]", TroughLaserPower);
+            infoWriter.WriteLine("Peak power at sample {0} [mW]", PeakLaserPower);
             infoWriter.WriteLine("Plaid period {0} [mm]", PlaidPeriodMM);
             infoWriter.WriteLine("Plaid period {0} [px]", PlaidPeriodPx);
             infoWriter.WriteLine("Plaid offset X {0} [px]", _plaidOffsetX);

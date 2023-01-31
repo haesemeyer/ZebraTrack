@@ -234,8 +234,8 @@ namespace ZebraTrack.Experiments
             infoWriter.WriteLine("Habituation length {0} [s]", _habitFrames / FrameRate);
             infoWriter.WriteLine("Pre gradient length {0} [s]", _preFrames / FrameRate);
             infoWriter.WriteLine("Gradient length {0} [s]", _gradFrames / FrameRate);
-            infoWriter.WriteLine("Center power {0} [mW]", CenterLaserPower);
-            infoWriter.WriteLine("Edge power {0} [mW]", EdgeLaserPower);
+            infoWriter.WriteLine("Center power at sample {0} [mW]", CenterLaserPower);
+            infoWriter.WriteLine("Edge power at sample {0} [mW]", EdgeLaserPower);
             infoWriter.WriteLine();
         }
 

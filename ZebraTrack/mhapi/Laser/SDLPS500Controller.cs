@@ -47,8 +47,8 @@ namespace MHApi.Laser
 
         /// <summary>
         /// For efficiency we don't want to calculate the power
-        /// out of the control voltage every time (since this req.
-        /// square-rooting). So we cash power values everytime they
+        /// out of the control voltage every time (since this requires a tree search).
+        /// So we cash power values everytime they
         /// are set and invalidate the cash when the _controlOutput
         /// is et directly
         /// </summary>
@@ -58,6 +58,12 @@ namespace MHApi.Laser
         /// Indicates validity of our power cash
         /// </summary>
         bool _powerCashValid;
+
+        /// <summary>
+        /// Interpolated lookup to convert from power at sample to control voltage
+        /// and vice versa
+        /// </summary>
+        private PowerAtSampleLookup _converter;
 
 
         /// <summary>
@@ -98,25 +104,20 @@ namespace MHApi.Laser
                 else
                 {
                     var co = ControlOutput;
-                    if (co > 0.8778)//because of the control voltage restriction an output voltage <1V is way out of the usable domain anyways
-                        _powerCashed = -4.6498e3 + Math.Sqrt((co - 0.8778) / 2.184e-8);
-                    else
-                        _powerCashed = 0;
-                    if (_powerCashed < 0)
-                        _powerCashed = 0;
+                    _powerCashed = _converter.GetPowerByAOV(co);
                     _powerCashValid = true;
                     return _powerCashed;
                 }
             }
             set
             {
-                if (value > 8000 || value < 0)
-                    throw new ArgumentOutOfRangeException("The requested power has to be btw. 0 and 8000 mW");
+                if (value > 4000 || value < 0)
+                    throw new ArgumentOutOfRangeException("The requested power at sample has to be btw. 0 and 4000 mW");
                 double co;
                 if (value == 0)
                     co = 0;
                 else
-                    co = 2.184E-8 * value * value + 0.0002031 * value + 1.35;
+                    co = _converter.GetAOVByPower(value);
                 ControlOutput = co;
                 _powerCashed = value;//cash the requested power for quick access
                 _powerCashValid = true;
@@ -135,6 +136,76 @@ namespace MHApi.Laser
             _aoWriter = new AnalogSingleChannelWriter(_aoTask.Stream);
             //Set output to 0
             _aoWriter.WriteSingleSample(true, 0);
+            //Create our converter based on power at sample measurements
+            double[] aov_vals = new double[]
+            {
+                1.3,
+                1.35,
+                1.4,
+                1.5,
+                1.6,
+                1.7,
+                1.8,
+                1.9,
+                2,
+                2.1,
+                2.2,
+                2.3,
+                2.4,
+                2.5,
+                2.6,
+                2.7,
+                2.8,
+                2.9,
+                3,
+                3.1,
+                3.2,
+                3.3,
+                3.4,
+                3.5,
+                3.6,
+                3.7,
+                3.8,
+                3.9,
+                4,
+                4.1,
+                4.2
+            };
+            double[] pas_vals = new double[]
+            {
+                0,
+                84,
+                125,
+                332,
+                555,
+                800,
+                1030,
+                1250,
+                1450,
+                1630,
+                1775,
+                1900,
+                2035,
+                2150,
+                2280,
+                2390,
+                2570,
+                2650,
+                2720,
+                2830,
+                2970,
+                3120,
+                3220,
+                3360,
+                3520,
+                3680,
+                3810,
+                3950,
+                4110,
+                4210,
+                4330
+            };
+            _converter = new PowerAtSampleLookup(pas_vals, aov_vals, true);
         }
 
         #region IDisposable
