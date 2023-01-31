@@ -29,6 +29,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -163,6 +164,7 @@
     <Compile Include="mhapi\Imaging\SelectiveUpdateBGModel.cs" />
     <Compile Include="mhapi\Imaging\TiffReader.cs" />
     <Compile Include="mhapi\Imaging\Tracker.cs" />
+    <Compile Include="mhapi\Laser\PowerAtSampleLookup.cs" />
     <Compile Include="mhapi\Laser\SDLPS500Controller.cs" />
     <Compile Include="mhapi\Laser\ThorlabsLDC240Controller.cs" />
     <Compile Include="mhapi\NIControl\PWMPacketCreator.cs" />
